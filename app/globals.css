@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: light dark; }
+
+/* Layout improvements */
+.container-pro {
+  @apply max-w-7xl mx-auto px-4 md:px-6;
+}
+.card {
+  @apply rounded-2xl border border-black/5 dark:border-white/10 bg-white/80 dark:bg-white/5 shadow-glass backdrop-blur;
+}
+.subtle {
+  @apply text-sm opacity-70;
+}

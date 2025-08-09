@@ -1,0 +1,47 @@
+
+import { NextRequest, NextResponse } from "next/server";
+import { limiter } from "@/app/api/_utils";
+import { buildHeaders } from "@/app/api/_headers";
+
+const INDEX_URL = "https://bbs-api-os.hoyolab.com/game_record/genshin/api/index";
+const CHAR_URL = "https://bbs-api-os.hoyolab.com/game_record/genshin/api/character";
+
+export async function POST(req: NextRequest){
+  if (!limiter(req.ip ?? "anon")) return NextResponse.json({ error: "Rate limited" }, { status: 429 });
+  const { uid, server, cookies } = await req.json();
+  if (!uid || !server || !(cookies?.ltoken_v2 || cookies?.cookie_token_v2)) {
+    return NextResponse.json({ error: "Missing uid/server/cookies" }, { status: 400 });
+  }
+  const query = `role_id=${encodeURIComponent(uid)}&server=${encodeURIComponent(server)}`;
+
+  // 1) fetch index for avatar ids
+  let headers = buildHeaders(cookies, query, undefined, false);
+  let res = await fetch(`${INDEX_URL}?${query}`, { headers });
+  let idx: any = await res.json().catch(()=>({}));
+  if (idx?.retcode && idx.retcode !== 0) {
+    headers = buildHeaders(cookies, query, undefined, true);
+    res = await fetch(`${INDEX_URL}?${query}`, { headers });
+    idx = await res.json().catch(()=>({}));
+    if (idx?.retcode && idx.retcode !== 0) return NextResponse.json(idx);
+  }
+
+  const avatarIds: number[] = (idx?.data?.avatars ?? []).map((a:any)=>a.id).filter(Boolean);
+  const bodyObj: any = { role_id: String(uid), server, character_ids: avatarIds };
+  const body = JSON.stringify(bodyObj);
+
+  // 2) character details
+  headers = buildHeaders(cookies, query, body, false);
+  res = await fetch(CHAR_URL, { method: "POST", headers, body });
+  let payload: any = await res.json().catch(()=>({}));
+  if (payload?.retcode && payload.retcode !== 0) {
+    headers = buildHeaders(cookies, query, body, true);
+    res = await fetch(CHAR_URL, { method: "POST", headers, body });
+    payload = await res.json().catch(()=>({}));
+  }
+  if (payload?.retcode && payload.retcode !== 0) return NextResponse.json(payload);
+
+  const characters = (payload?.data?.list ?? payload?.data?.avatars ?? []).map((a:any) => ({
+    name: a.name, element: a.element, level: a.level, constellations: a.actived_constellation_num
+  }));
+  return NextResponse.json({ retcode: 0, __debug: { count: characters.length, ids: avatarIds.length }, characters });
+}

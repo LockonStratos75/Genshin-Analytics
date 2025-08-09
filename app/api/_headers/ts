@@ -1,0 +1,34 @@
+
+import { genDSv2, genDSv1 } from "@/app/api/_ds";
+
+function randHex(len:number){
+  const hex = "abcdef0123456789"; let s=""; for(let i=0;i<len;i++) s+=hex[Math.floor(Math.random()*hex.length)]; return s;
+}
+
+// Build a fairly complete header set used by HoYoLAB web requests
+export function buildHeaders(cookies: Record<string,string>, query: string, body: string|undefined, useV1=false){
+  const cookieParts: string[] = [];
+  // include whatever was provided
+  for (const k of ["ltoken_v2","ltuid_v2","cookie_token_v2","account_id_v2","ltmid_v2","account_mid_v2"]) {
+    if (cookies?.[k]) cookieParts.push(`${k}=${cookies[k]}`);
+  }
+  const deviceId = randHex(32);
+  const headers: Record<string,string> = {
+    "Cookie": cookieParts.join("; ") + ";",
+    "x-rpc-app_version": "2.62.1",
+    "x-rpc-client_type": "5",
+    "x-rpc-language": "en-us",
+    "x-rpc-device_id": deviceId,
+    "x-rpc-device_fp": `Fp.${deviceId.slice(0,13)}`,
+    "x-rpc-device_name": "Chrome",
+    "x-rpc-device_model": "Windows 10",
+    "x-rpc-sys_version": "10",
+    "x-rpc-channel": "mihoyo",
+    "x-rpc-platform": "5",
+    "Origin": "https://act.hoyolab.com",
+    "Referer": "https://act.hoyolab.com/app/community-game-records-sea/index.html",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36"
+  };
+  headers["DS"] = useV1 ? genDSv1() : genDSv2(query, body ?? "");
+  return headers;
+}
