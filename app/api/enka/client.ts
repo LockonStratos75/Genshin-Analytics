@@ -2,45 +2,62 @@
 import "server-only";
 import { EnkaClient } from "enka-network-api";
 
-// Reuse a single client in dev/hot-reload too
-const g = globalThis as unknown as { __enka?: Promise<EnkaClient> };
+type G = typeof globalThis & {
+    __enkaClientPromise?: Promise<EnkaClient>;
+    __enkaWarmPromise?: Promise<void>;
+};
 
-let warmed = false;
+const g = globalThis as G;
 
-export async function getEnka(): Promise<EnkaClient> {
-    if (!g.__enka) {
-        g.__enka = (async () => {
-            const enka = new EnkaClient({
-                // keep cache inside project; override with ENKA_CACHE_DIR if you want
-                cacheDirectory: process.env.ENKA_CACHE_DIR || "./.enka-cache",
-                defaultLanguage: "en", // <— important for names
-                showFetchCacheLog: true,
-            });
+/** pick a cache dir that works locally and on Vercel */
+const CACHE_DIR =
+    process.env.ENKA_CACHE_DIR ||
+    (process.env.VERCEL ? "/tmp/enka-cache" : "./.enka-cache");
 
-            // ensure dir exists
-            enka.cachedAssetsManager.cacheDirectorySetup();
+/** create the client once per process */
+async function createClient(): Promise<EnkaClient> {
+    const enka = new EnkaClient({
+        cacheDirectory: CACHE_DIR,
+        defaultLanguage: "en",
+        showFetchCacheLog: true,
+        // Vercel egress can be slow on cold starts
+        requestTimeout: 15000,
+        userAgent: "Mozilla/5.0",
+    });
 
-            // One-time warm-up so first request doesn't unzip lazily
-            if (!warmed) {
-                try {
-                    await enka.cachedAssetsManager.fetchAllContents();
-                } catch {
-                    // cache already present or network issue; continue with whatever is there
-                }
+    enka.cachedAssetsManager.cacheDirectorySetup();
+
+    // Background updater (safe no-op on lambdas that get torn down)
+    enka.cachedAssetsManager.activateAutoCacheUpdater({
+        instant: false,
+        timeout: 60 * 60 * 1000,
+        onUpdateEnd: async () => enka.cachedAssetsManager.refreshAllData(),
+    });
+
+    return enka;
+}
+
+/** ensure the full game data cache exists (idempotent) */
+async function warmCache(enka: EnkaClient): Promise<void> {
+    if (!g.__enkaWarmPromise) {
+        g.__enkaWarmPromise = (async () => {
+            try {
+                // Downloads on first run; quick no-op if already present
+                await enka.cachedAssetsManager.fetchAllContents();
+            } catch {
+                // ignore: cache may already be there
+            } finally {
                 enka.cachedAssetsManager.refreshAllData();
-                warmed = true;
             }
-
-            // Optional: background updater
-            enka.cachedAssetsManager.activateAutoCacheUpdater({
-                instant: false,
-                timeout: 60 * 60 * 1000, // 1 hour
-                onUpdateEnd: async () => enka.cachedAssetsManager.refreshAllData(),
-            });
-
-            return enka;
         })();
     }
+    await g.__enkaWarmPromise;
+}
 
-    return g.__enka;
+/** Public API used by your routes */
+export async function getEnka(): Promise<EnkaClient> {
+    if (!g.__enkaClientPromise) g.__enkaClientPromise = createClient();
+    const enka = await g.__enkaClientPromise;
+    await warmCache(enka); // important on Vercel: /tmp is empty on cold start
+    return enka;
 }
