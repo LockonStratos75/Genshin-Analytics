@@ -73,15 +73,14 @@ export default function ArtifactGrid() {
     if (fromTop.length) return fromTop;
     const list: A[] = [];
     for (const ch of characters || []) {
-      for (const a of ch?.artifacts || []) if (a) list.push(a);
+      for (const a of ch?.artifacts || []) if (a) list.push(a as A);
     }
     return list;
   }, [artifactsRaw, characters]);
 
   const [setName, setSetName] = useState("");
   const sets = useMemo(
-      () =>
-          Array.from(new Set(artifacts.map((a) => a?.set).filter(Boolean) as string[])),
+      () => Array.from(new Set(artifacts.map((a) => a?.set).filter(Boolean) as string[])),
       [artifacts]
   );
   const filtered = useMemo(
@@ -112,13 +111,13 @@ export default function ArtifactGrid() {
         ) : (
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {filtered.map((a, i) => {
-                const subs: Sub[] = Array.isArray(a?.substats) ? a.substats! : [];
+                const subs = (Array.isArray(a?.substats) ? a.substats! : []) as any[]; // cast to scoring type
                 const subs4: (Sub | null)[] = [...subs];
                 while (subs4.length < 4) subs4.push(null);
 
                 const main = a?.mainstat || {};
-                const rv = critRV(subs);
-                const score = scoreArtifact(subs);
+                const rv = critRV(subs as any); // TS: coerce to expected Substat[]
+                const score = scoreArtifact(subs as any);
 
                 const stars = a?.rarity ? Array(a.rarity).fill("★").join("") : "—";
 
@@ -167,7 +166,7 @@ export default function ArtifactGrid() {
                             const v = s ? fmtValue(s.stat, s.value, s.isPercent) : "";
                             const rolls =
                                 s && Number.isFinite(s.value)
-                                    ? `${rollsEstimate(s.stat, s.value).toFixed(1)}r`
+                                    ? `${rollsEstimate(s.stat ?? "", s.value ?? 0).toFixed(1)}r`
                                     : "";
                             return (
                                 <div
