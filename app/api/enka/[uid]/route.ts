@@ -181,6 +181,7 @@ function mapArtifact(a: EnkaArtifact) {
 
 // If we didn't get 4 clean subs, fall back to GOOD.
 // IMPORTANT: GOOD values are already in game units (percent already scaled).
+  // @ts-ignore
   const needsGood = substats.length < 4 || substats.some(s => !s.stat || s.value === undefined);
   if (needsGood && typeof (a as any).toGOOD === "function") {
     try {
