@@ -47,6 +47,10 @@ export default function ConnectHoyolab() {
     try {
       if (!uid) throw new Error("Enter your UID.");
       localStorage.setItem("uid", uid);
+      // after localStorage.setItem("uid", uid);
+      if (typeof window !== "undefined") {
+        window.sessionStorage.setItem("enka:uid", uid);
+      }
 
       const r = await fetch(`/api/enka/${encodeURIComponent(uid)}`, { cache: "no-store" });
       const j: ApiPayload = await r.json();
@@ -90,6 +94,7 @@ export default function ConnectHoyolab() {
       await new Promise((res) => setTimeout(res, 0));
 
       startTransition(() => router.push("/characters"));
+      startTransition(() => router.push(`/characters?uid=${encodeURIComponent(uid)}`));
     } catch (e: any) {
       console.error("[connect] fetchViaEnka error:", e);
       setErr(e?.message ?? String(e));

@@ -1,7 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import useStore from "@/lib/store";
+
+/* ---------- helpers ---------- */
 
 const elementLabel = (e?: string) => {
   if (!e) return "—";
@@ -25,13 +29,30 @@ const elementLabel = (e?: string) => {
 };
 
 function safeName(v: any, fallback: string | number) {
-  // Some payloads arrive with the literal string "undefined"
   if (v === undefined || v === null || v === "" || v === "undefined") return String(fallback);
   return String(v);
 }
 
+/* ---------- component ---------- */
+
 export default function CharacterGrid() {
-  const chars = useStore((s) => s.characters);
+  const chars = useStore((s: any) => s.characters);
+  const uidFromStore = useStore((s: any) => s.uid || s.lastUid);
+  const searchParams = useSearchParams();
+
+  // pull uid from several places so links always resolve
+  const [uidStorage, setUidStorage] = useState<{ session?: string; local?: string }>({});
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setUidStorage({
+        session: window.sessionStorage.getItem("enka:uid") || undefined,
+        local: window.localStorage.getItem("uid") || undefined,
+      });
+    }
+  }, []);
+
+  const uid = uidFromStore || searchParams.get("uid") || uidStorage.session || uidStorage.local || "";
+
   const [q, setQ] = useState("");
   const [element, setElement] = useState("");
 
@@ -46,6 +67,8 @@ export default function CharacterGrid() {
   if (!chars || chars.length === 0) {
     return <p className="opacity-70">Fetch via Enka to see your characters.</p>;
   }
+
+  const slotOrder = ["Flower", "Feather", "Sands", "Goblet", "Circlet"];
 
   return (
       <div className="card p-4">
@@ -86,18 +109,15 @@ export default function CharacterGrid() {
             const wLv = weapon?.level ?? 1;
 
             const arts: any[] = Array.isArray(c?.artifacts) ? c.artifacts : [];
-            // Keep order consistent by slot
-            const slotOrder = ["Flower", "Feather", "Sands", "Goblet", "Circlet"];
             const sortedArts = [...arts].sort(
                 (a, b) => slotOrder.indexOf(a?.slot) - slotOrder.indexOf(b?.slot)
             );
 
-            return (
-                <div
-                    key={c?.id ?? i}
-                    className="rounded-2xl border border-black/10 dark:border-white/10 p-4 bg-white/70 dark:bg-white/5 backdrop-blur-sm hover:shadow-lg transition-shadow"
-                >
-                  {/* header: icon + name/row */}
+            const canLink = Boolean(uid && c?.id);
+            const href = canLink ? `/characters/${uid}/${c.id}` : "#";
+
+            const card = (
+                <div className="rounded-2xl border border-black/10 dark:border-white/10 p-4 bg-white/70 dark:bg-white/5 backdrop-blur-sm hover:shadow-lg transition-shadow">
                   <div className="flex items-center gap-4">
                     {c?.icon ? (
                         <img
@@ -111,11 +131,8 @@ export default function CharacterGrid() {
 
                     <div className="min-w-0 flex-1">
                       <div className="text-base font-semibold truncate">{name}</div>
-                      <div className="text-xs opacity-75">
-                        Lv {c?.level ?? "—"} • {el} • C{cons}
-                      </div>
+                      <div className="text-xs opacity-75">Lv {c?.level ?? "—"} • {el} • C{cons}</div>
 
-                      {/* weapon row */}
                       <div className="mt-2 flex items-center gap-2 text-xs opacity-90">
                         {wIcon ? (
                             <img
@@ -133,9 +150,12 @@ export default function CharacterGrid() {
                         </div>
                       </div>
                     </div>
+
+                    <span className="text-[10px] px-2 py-1 rounded-lg border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 whitespace-nowrap">
+                  {canLink ? "View →" : "No UID"}
+                </span>
                   </div>
 
-                  {/* artifacts row */}
                   <div className="mt-3">
                     <div className="text-xs opacity-70 mb-1">Artifacts</div>
                     <div className="flex items-center gap-2">
@@ -145,7 +165,6 @@ export default function CharacterGrid() {
                         const title = a
                             ? `${a.set ?? "Set"} • +${a.level ?? 0}${a.mainstat?.stat ? " • " + a.mainstat.stat : ""}`
                             : `${slot} — empty`;
-
                         return icon ? (
                             <img
                                 key={slot}
@@ -166,6 +185,16 @@ export default function CharacterGrid() {
                       })}
                     </div>
                   </div>
+                </div>
+            );
+
+            return canLink ? (
+                <Link key={c?.id ?? i} href={href} prefetch={false} className="outline-none rounded-2xl">
+                  {card}
+                </Link>
+            ) : (
+                <div key={c?.id ?? i} title="UID not found; add ?uid=XXXXXXXXX to URL or fetch in Connect.">
+                  {card}
                 </div>
             );
           })}

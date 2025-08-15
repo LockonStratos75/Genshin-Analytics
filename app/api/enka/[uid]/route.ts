@@ -120,10 +120,49 @@ const GOOD_LABEL: Record<string, string> = {
 function fromStatProperty(sp: any) {
   if (!sp) return undefined;
   const name = t(sp.fightPropName ?? sp.name ?? sp.text);
-  // Some wrappers already pre-multiply percentages; prefer rawValue+isPercent if present
   const base = typeof sp.rawValue === "number" ? sp.rawValue : sp.value;
   const { value, isPercent } = normalizeValue(base, sp.isPercent);
   return { stat: name, value, isPercent };
+}
+
+/* -------- Stats extraction (for akasha-like panel) -------- */
+
+const FP_LABEL: Record<string, string> = {
+  FIGHT_PROP_HP: "Max HP",
+  FIGHT_PROP_ATTACK: "ATK",
+  FIGHT_PROP_DEFENSE: "DEF",
+  FIGHT_PROP_ELEMENT_MASTERY: "Elemental Mastery",
+  FIGHT_PROP_CRITICAL: "CRIT Rate",
+  FIGHT_PROP_CRITICAL_HURT: "CRIT DMG",
+  FIGHT_PROP_CHARGE_EFFICIENCY: "Energy Recharge",
+  FIGHT_PROP_PHYSICAL_ADD_HURT: "Physical DMG Bonus",
+  FIGHT_PROP_FIRE_ADD_HURT: "Pyro DMG Bonus",
+  FIGHT_PROP_WATER_ADD_HURT: "Hydro DMG Bonus",
+  FIGHT_PROP_ELEC_ADD_HURT: "Electro DMG Bonus",
+  FIGHT_PROP_WIND_ADD_HURT: "Anemo DMG Bonus",
+  FIGHT_PROP_ICE_ADD_HURT: "Cryo DMG Bonus",
+  FIGHT_PROP_ROCK_ADD_HURT: "Geo DMG Bonus",
+  FIGHT_PROP_GRASS_ADD_HURT: "Dendro DMG Bonus",
+  FIGHT_PROP_HEAL_ADD_HURT: "Healing Bonus", // some versions
+  FIGHT_PROP_HEAL_ADD: "Healing Bonus",
+};
+
+function extractStats(c: any): Record<string, number> {
+  // try a few shapes enka-network-api has used
+  const src =
+      (c?.stats?.toJSON?.() as Record<string, number>) ||
+      (c?.stats?.toObject?.() as Record<string, number>) ||
+      (c?.stats as Record<string, number>) ||
+      (c?.fightProps as Record<string, number>) ||
+      {};
+
+  const out: Record<string, number> = {};
+  for (const [k, v] of Object.entries(src)) {
+    const label = FP_LABEL[k];
+    if (!label) continue;
+    out[label] = Number(v);
+  }
+  return out;
 }
 
 /* ------------ mappers ------------ */
@@ -176,18 +215,17 @@ function mapArtifact(a: EnkaArtifact) {
 
   // First pass: try reading container values directly (these can be 0.466 style)
   let substats = subsArr
-      .map((s: any) => fromStatProperty(s))   // <-- you already have this helper
+      .map((s: any) => fromStatProperty(s))
       .filter((x: any) => x && x.stat && x.value !== undefined);
 
-// If we didn't get 4 clean subs, fall back to GOOD.
-// IMPORTANT: GOOD values are already in game units (percent already scaled).
+  // Fallback to GOOD if needed (GOOD is already scaled to in-game units)
   // @ts-ignore
-  const needsGood = substats.length < 4 || substats.some(s => !s.stat || s.value === undefined);
+  const needsGood = substats.length < 4 || substats.some((s) => !s.stat || s.value === undefined);
   if (needsGood && typeof (a as any).toGOOD === "function") {
     try {
       const good = (a as any).toGOOD();
 
-      // ---- SUBSTATS FROM GOOD (NO SCALING) ----
+      // SUBSTATS
       if (Array.isArray(good?.substats)) {
         const goodSubs = good.substats
             .filter((x: any) => x?.key)
@@ -196,15 +234,14 @@ function mapArtifact(a: EnkaArtifact) {
               const isPercent = key.endsWith("_") || /_dmg_$/i.test(key);
               return {
                 stat: GOOD_LABEL[key] ?? key,
-                value: x.value,           // <- keep as-is from GOOD
-                isPercent,                // for UI
+                value: x.value,
+                isPercent,
               };
             });
 
         if (!substats.length) {
           substats = goodSubs;
         } else {
-          // fill any blanks with GOOD
           const filled: any[] = [];
           const maxLen = Math.max(substats.length, goodSubs.length);
           for (let i = 0; i < maxLen; i++) {
@@ -218,13 +255,13 @@ function mapArtifact(a: EnkaArtifact) {
         }
       }
 
-      // ---- MAIN STAT FROM GOOD (NO SCALING) ----
+      // MAIN STAT
       if ((!mainstat || !mainstat.stat || mainstat.value === undefined) && good?.mainStatKey) {
         const key = String(good.mainStatKey);
         const isPercent = key.endsWith("_") || /_dmg_$/i.test(key);
         mainstat = {
           stat: GOOD_LABEL[key] ?? key,
-          value: good.mainStatValue,  // <- keep as-is from GOOD
+          value: good.mainStatValue,
           isPercent,
         };
       }
@@ -294,6 +331,9 @@ function mapCharacter(c: EnkaCharacter) {
               SLOT_ORDER.indexOf(a.slot as any) - SLOT_ORDER.indexOf(b.slot as any)
       );
 
+  // NEW: expose full stats for the character page
+  const stats = extractStats(c as any);
+
   return {
     id,
     name,
@@ -302,7 +342,8 @@ function mapCharacter(c: EnkaCharacter) {
     icon,
     weaponType: (cd as any)?.weaponType ?? null,
     rarity: (cd as any)?.rarity ?? (cd as any)?.quality ?? null,
-    baseStats: {},
+    baseStats: {}, // keep existing shape
+    stats,         // <— added; consumed by the character page
     talentLevels: { normal: null, skill: null, burst: null },
     weapon,
     artifacts,
