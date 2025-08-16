@@ -25,7 +25,7 @@ export default function Navbar() {
                     <IconMenu className="w-6 h-6" />
                 </button>
 
-                <div className="font-semibold">Genshin Analytics</div>
+                {/*<div className="font-semibold">Genshin Analytics</div>*/}
                 <div className="ml-auto flex items-center gap-2">
                     <ThemeToggle />
                 </div>

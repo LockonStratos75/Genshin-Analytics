@@ -29,7 +29,7 @@ const NAV = [
     { href: "/gacha", label: "Gacha History" },
     { href: "/analytics", label: "Analytics" },
     { href: "/profile", label: "Profile" },
-    { href: "/hoyolab", label: "Connect HoYoLAB" },
+    { href: "/connect", label: "Connect Enka" },
 ];
 
 export default function Sidebar() {

@@ -6,9 +6,9 @@ import TextMapUpload from "@/components/TextMapUpload";
 export default function ConnectPage(){
   return (
     <div className="grid gap-6">
-      <h1 className="text-2xl font-semibold">Connect HoYoLAB & Wish History</h1>
+      <h1 className="text-2xl font-semibold">Connect Your Account</h1>
       <ConnectHoyolab />
-      <TextMapUpload />
+      {/*<TextMapUpload />*/}
       <PasteWishURL />
     </div>
   );
