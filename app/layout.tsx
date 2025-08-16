@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
 import { SidebarProvider } from "@/components/SidebarStore";
+import AkashaHeader from "@/components/AkashaHeader";
 
 export const metadata: Metadata = {
   title: "Genshin Analytics",
@@ -22,6 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
         </div>
       </SidebarProvider>
+
       </body>
       </html>
   );

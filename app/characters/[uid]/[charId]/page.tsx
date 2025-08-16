@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
+import AkashaRefreshButton from "@/components/AkashaRefreshButton";
 
 /* ---------------- types (loose to avoid build friction) ---------------- */
 type Sub = { stat?: string; value?: number; isPercent?: boolean };
@@ -52,10 +53,13 @@ type Character = {
     talents?: Talents;
 };
 
-
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata({ params }: { params: { uid: string; charId: string } }): Promise<Metadata> {
+export async function generateMetadata({
+                                           params,
+                                       }: {
+    params: { uid: string; charId: string };
+}): Promise<Metadata> {
     return { title: `Character • ${params.charId}` };
 }
 
@@ -77,16 +81,16 @@ function stars(n?: number | null) {
     return Array(n).fill("★").join("");
 }
 
-/** Robustly resolve substats regardless of shape
- *  (fix: if the API already returns {stat, value}, keep it as-is) */
+/** Robustly resolve substats regardless of shape */
 function normalizeSubstats(a?: Artifact): Sub[] {
     if (!a) return [];
-    // If already good (array of {stat,value}), just pass through
-    if (Array.isArray((a as any)?.substats) && (a as any).substats.every((x: any) => x && typeof x.stat === "string")) {
+    if (
+        Array.isArray((a as any)?.substats) &&
+        (a as any).substats.every((x: any) => x && typeof x.stat === "string")
+    ) {
         return (a as any).substats as Sub[];
     }
 
-    // Otherwise, pull from known containers and re-map
     const raw =
         Array.isArray((a as any)?.substats?.substats)
             ? (a as any).substats.substats
@@ -100,34 +104,38 @@ function normalizeSubstats(a?: Artifact): Sub[] {
 
     return (raw as any[]).map((s: any) => ({
         stat:
-        // TextAssets / StatProperty
             s?.fightPropName?.get?.("en") ||
             s?.statProperty?.name ||
             s?.type ||
             s?.propType ||
-            s?.key ||      // GOOD key fallback (e.g., critRate_)
-            s?.stat ||     // <- IMPORTANT: preserve already-mapped stat label
+            s?.key ||
+            s?.stat ||
             "",
         value: Number(s?.value ?? s?.statValue ?? 0),
         isPercent: !!s?.isPercent,
     }));
 }
 
-/** Absolute URL for server fetch to avoid “Invalid URL” */
+/** Absolute URL for server fetch to avoid “Invalid URL” in RSC */
 function absoluteApiUrl(path: string) {
     if (/^https?:\/\//i.test(path)) return path;
     const h = headers();
     const host = h.get("x-forwarded-host") ?? h.get("host") ?? "localhost:3000";
-    const proto = h.get("x-forwarded-proto") ?? (host.includes("localhost") ? "http" : "https");
+    const proto =
+        h.get("x-forwarded-proto") ?? (host.includes("localhost") ? "http" : "https");
     return `${proto}://${host}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
 /* ---------------- page ---------------- */
 
-export default async function CharacterPage({ params }: { params: { uid: string; charId: string } }) {
+export default async function CharacterPage({
+                                                params,
+                                            }: {
+    params: { uid: string; charId: string };
+}) {
     const { uid, charId } = params;
 
-    // fetch your API (absolute URL for RSC)
+    // fetch Enka API via our Next route
     const res = await fetch(absoluteApiUrl(`/api/enka/${encodeURIComponent(uid)}`), {
         cache: "no-store",
     });
@@ -141,8 +149,11 @@ export default async function CharacterPage({ params }: { params: { uid: string;
             </div>
         );
     }
+
     const data = await res.json();
-    const characters: Character[] = Array.isArray(data?.characters) ? data.characters : [];
+    const characters: Character[] = Array.isArray(data?.characters)
+        ? data.characters
+        : [];
     const c = characters.find((x) => String(x.id) === String(charId));
 
     if (!c) {
@@ -154,9 +165,26 @@ export default async function CharacterPage({ params }: { params: { uid: string;
         );
     }
 
+    // ---------- fetch Akasha AFTER we know uid and the character ----------
+    // (via our Next proxy route, not the Python server directly)
+    let ak: any = null;
+    try {
+        const akRes = await fetch(
+            absoluteApiUrl(`/api/akasha/${encodeURIComponent(uid)}`),
+            { cache: "no-store" }
+        );
+        const akasha = akRes.ok ? await akRes.json() : null;
+        ak =
+            akasha?.calculations?.find(
+                (x: any) => (x.character || "").toLowerCase() === c.name.toLowerCase()
+            ) ?? null;
+    } catch {
+        ak = null;
+    }
+
     const artifacts = (c.artifacts || []).map((a) => ({
         ...a,
-        substats: normalizeSubstats(a), // <- keeps names when already mapped
+        substats: normalizeSubstats(a),
     }));
 
     // Build a tidy list of stats for the panel (order first, then any extras)
@@ -184,6 +212,33 @@ export default async function CharacterPage({ params }: { params: { uid: string;
 
     return (
         <div className="card p-5">
+            {/* Akasha header row: badge + refresh button */}
+            <div className="mb-4 flex items-center gap-3">
+                {ak ? (
+                    <div className="inline-flex items-center gap-2 rounded-full bg-emerald-600/10 text-emerald-700 dark:text-emerald-300 px-3 py-1 text-xs border border-emerald-600/20">
+                        <span className="font-medium">Leaderboard</span>
+                        <span>Top {Number(ak.topPercent).toFixed(0)}%</span>
+                        {ak.url ? (
+                            <a
+                                href={ak.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="underline opacity-80 hover:opacity-100"
+                            >
+                                View
+                            </a>
+                        ) : null}
+                    </div>
+                ) : (
+                    <div className="inline-flex items-center gap-2 rounded-full bg-slate-500/10 text-slate-600 dark:text-slate-300 px-3 py-1 text-xs">
+                        No Akasha entry
+                    </div>
+                )}
+
+                {/* Refresh button (client) */}
+                <AkashaRefreshButton uid={uid} />
+            </div>
+
             {/* header */}
             <div className="flex items-center gap-4">
                 {c.icon ? (
@@ -203,7 +258,7 @@ export default async function CharacterPage({ params }: { params: { uid: string;
                 </div>
             </div>
 
-            {/* stats panel (Akasha-style) */}
+            {/* stats panel */}
             {!!Object.keys(stats).length && (
                 <div className="mt-6">
                     <div className="text-sm opacity-70 mb-2">Stats</div>
@@ -247,7 +302,9 @@ export default async function CharacterPage({ params }: { params: { uid: string;
                                 className="rounded-xl border border-black/10 dark:border-white/10 bg-white/50 dark:bg-white/5 px-3 py-2 flex items-center justify-between"
                             >
                                 <div className="text-xs opacity-70">{k}</div>
-                                <div className="text-sm font-semibold tabular-nums">{Number(v).toLocaleString()}</div>
+                                <div className="text-sm font-semibold tabular-nums">
+                                    {Number(v).toLocaleString()}
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -261,8 +318,8 @@ export default async function CharacterPage({ params }: { params: { uid: string;
                     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                         {([
                             ["normal", "Normal Attack"],
-                            ["skill",  "Elemental Skill"],
-                            ["burst",  "Elemental Burst"],
+                            ["skill", "Elemental Skill"],
+                            ["burst", "Elemental Burst"],
                         ] as const).map(([key, label]) => {
                             const t = (c as any).talents?.[key];
                             if (!t || (!t.name && !t.level)) return null;
@@ -272,15 +329,18 @@ export default async function CharacterPage({ params }: { params: { uid: string;
                                     className="rounded-xl border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 p-3"
                                 >
                                     <div className="text-xs opacity-60">{label}</div>
-                                    <div className="text-sm font-semibold leading-tight">{t.name ?? "—"}</div>
-                                    <div className="text-xs opacity-70 mt-1">Level: {t.level ?? "—"}</div>
+                                    <div className="text-sm font-semibold leading-tight">
+                                        {t.name ?? "—"}
+                                    </div>
+                                    <div className="text-xs opacity-70 mt-1">
+                                        Level: {t.level ?? "—"}
+                                    </div>
                                 </div>
                             );
                         })}
                     </div>
                 </div>
             )}
-
 
             {/* weapon */}
             <div className="mt-6">
@@ -295,8 +355,8 @@ export default async function CharacterPage({ params }: { params: { uid: string;
                         <div className="min-w-0">
                             <div className="font-medium">{c.weapon.name ?? c.weapon.id}</div>
                             <div className="text-xs opacity-70">
-                                {c.weapon.type ?? "—"} • {c.weapon.rarity ?? "—"}★ • R{c.weapon.refinement ?? 1} • Lv{" "}
-                                {c.weapon.level ?? "—"}
+                                {c.weapon.type ?? "—"} • {c.weapon.rarity ?? "—"}★ • R
+                                {c.weapon.refinement ?? 1} • Lv {c.weapon.level ?? "—"}
                             </div>
                         </div>
                     </div>
@@ -329,7 +389,9 @@ export default async function CharacterPage({ params }: { params: { uid: string;
                                             <div className="w-12 h-12 rounded-xl bg-black/10 dark:bg-white/10" />
                                         )}
                                         <div className="min-w-0">
-                                            <div className="font-semibold truncate">{a.set || "Unknown Set"}</div>
+                                            <div className="font-semibold truncate">
+                                                {a.set || "Unknown Set"}
+                                            </div>
                                             <div className="text-xs opacity-70">
                                                 {a.slot ?? "—"} • {stars(a.rarity as number)} • +{a.level ?? 0}
                                             </div>
@@ -340,7 +402,9 @@ export default async function CharacterPage({ params }: { params: { uid: string;
                                         {/* main stat */}
                                         <div className="col-span-2 rounded-xl border border-black/5 dark:border-white/5 p-3 bg-black/5 dark:bg-white/5 flex flex-col min-h-[110px]">
                                             <div className="text-[10px] uppercase opacity-70">Main Stat</div>
-                                            <div className="mt-1 text-sm font-medium truncate">{a.mainstat?.stat || "—"}</div>
+                                            <div className="mt-1 text-sm font-medium truncate">
+                                                {a.mainstat?.stat || "—"}
+                                            </div>
                                             <div className="mt-auto text-2xl font-bold tabular-nums">
                                                 {fmt(a.mainstat?.stat, a.mainstat?.value, a.mainstat?.isPercent)}
                                             </div>
@@ -353,7 +417,9 @@ export default async function CharacterPage({ params }: { params: { uid: string;
                                                     key={idx}
                                                     className="rounded-xl border border-black/5 dark:border-white/5 p-2.5 bg-white/60 dark:bg-white/5 flex flex-col min-h-[52px]"
                                                 >
-                                                    <div className="text-[10px] uppercase opacity-60">{s?.stat || "—"}</div>
+                                                    <div className="text-[10px] uppercase opacity-60">
+                                                        {s?.stat || "—"}
+                                                    </div>
                                                     <div className="mt-1 text-sm font-semibold tabular-nums">
                                                         {s ? fmt(s.stat, s.value, s.isPercent) : "—"}
                                                     </div>
