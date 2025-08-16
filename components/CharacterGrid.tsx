@@ -151,9 +151,9 @@ export default function CharacterGrid() {
                       </div>
                     </div>
 
-                    <span className="text-[10px] px-2 py-1 rounded-lg border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 whitespace-nowrap">
-                  {canLink ? "View →" : "No UID"}
-                </span>
+                {/*    <span className="text-[10px] px-2 py-1 rounded-lg border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 whitespace-nowrap">*/}
+                {/*  {canLink ? "View →" : "No UID"}*/}
+                {/*</span>*/}
                   </div>
 
                   <div className="mt-3">
