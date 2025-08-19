@@ -1,6 +1,7 @@
+// app/characters/[uid]/[charId]/page.tsx
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import AkashaRefreshButton from "@/components/AkashaRefreshButton";
+import RefreshAkashaButton from "@/components/RefreshAkashaButton";
 
 /* ---------------- types (loose to avoid build friction) ---------------- */
 type Sub = { stat?: string; value?: number; isPercent?: boolean };
@@ -28,11 +29,7 @@ type Weapon = {
 };
 
 type TalentEntry = { name?: string | null; level?: number | null };
-type Talents = {
-    normal?: TalentEntry;
-    skill?: TalentEntry;
-    burst?: TalentEntry;
-};
+type Talents = { normal?: TalentEntry; skill?: TalentEntry; burst?: TalentEntry };
 
 type Character = {
     id: string;
@@ -45,11 +42,8 @@ type Character = {
     artifacts?: Artifact[];
     weapon?: Weapon | null;
     element?: string | null;
-    /** Derived stats panel (Max HP, ATK, DEF, EM, ER, CRITs, Element DMG Bonus) */
     stats?: Record<string, number>;
-    /** Base HP/ATK/DEF */
     baseStats?: Record<string, number>;
-    /** Talent names + levels */
     talents?: Talents;
 };
 
@@ -64,11 +58,9 @@ export async function generateMetadata({
 }
 
 /* ---------------- helpers ---------------- */
-
 function pctStat(stat?: string) {
     if (!stat) return false;
-    const k = stat.toLowerCase();
-    return /(rate|dmg|bonus|recharge|%)/i.test(k);
+    return /(rate|dmg|bonus|recharge|%)/i.test(stat.toLowerCase());
 }
 function fmt(stat?: string, value?: number, isPercent?: boolean) {
     if (value == null || Number.isNaN(value)) return "—";
@@ -80,17 +72,11 @@ function stars(n?: number | null) {
     if (!n) return "—";
     return Array(n).fill("★").join("");
 }
-
-/** Robustly resolve substats regardless of shape */
 function normalizeSubstats(a?: Artifact): Sub[] {
     if (!a) return [];
-    if (
-        Array.isArray((a as any)?.substats) &&
-        (a as any).substats.every((x: any) => x && typeof x.stat === "string")
-    ) {
+    if (Array.isArray((a as any)?.substats) && (a as any).substats.every((x: any) => x && typeof x.stat === "string")) {
         return (a as any).substats as Sub[];
     }
-
     const raw =
         Array.isArray((a as any)?.substats?.substats)
             ? (a as any).substats.substats
@@ -115,19 +101,15 @@ function normalizeSubstats(a?: Artifact): Sub[] {
         isPercent: !!s?.isPercent,
     }));
 }
-
-/** Absolute URL for server fetch to avoid “Invalid URL” in RSC */
 function absoluteApiUrl(path: string) {
     if (/^https?:\/\//i.test(path)) return path;
     const h = headers();
     const host = h.get("x-forwarded-host") ?? h.get("host") ?? "localhost:3000";
-    const proto =
-        h.get("x-forwarded-proto") ?? (host.includes("localhost") ? "http" : "https");
+    const proto = h.get("x-forwarded-proto") ?? (host.includes("localhost") ? "http" : "https");
     return `${proto}://${host}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
 /* ---------------- page ---------------- */
-
 export default async function CharacterPage({
                                                 params,
                                             }: {
@@ -135,25 +117,29 @@ export default async function CharacterPage({
 }) {
     const { uid, charId } = params;
 
-    // fetch Enka API via our Next route
-    const res = await fetch(absoluteApiUrl(`/api/enka/${encodeURIComponent(uid)}`), {
-        cache: "no-store",
-    });
-    if (!res.ok) {
+    // Fetch Enka + Akasha concurrently (short TTLs)
+    const [enkaRes, akRes] = await Promise.all([
+        fetch(absoluteApiUrl(`/api/enka/${encodeURIComponent(uid)}`), {
+            next: { revalidate: 300 }, // 5 min
+        }),
+        fetch(absoluteApiUrl(`/api/akasha/${encodeURIComponent(uid)}`), {
+            next: { revalidate: 600 }, // 10 min
+        }),
+    ]);
+
+    if (!enkaRes.ok) {
         return (
             <div className="card p-6">
                 <h1 className="text-lg font-semibold">Failed to load data</h1>
                 <p className="opacity-70 mt-1">
-                    {res.status} {res.statusText}
+                    {enkaRes.status} {enkaRes.statusText}
                 </p>
             </div>
         );
     }
 
-    const data = await res.json();
-    const characters: Character[] = Array.isArray(data?.characters)
-        ? data.characters
-        : [];
+    const data = await enkaRes.json();
+    const characters: Character[] = Array.isArray(data?.characters) ? data.characters : [];
     const c = characters.find((x) => String(x.id) === String(charId));
 
     if (!c) {
@@ -165,14 +151,9 @@ export default async function CharacterPage({
         );
     }
 
-    // ---------- fetch Akasha AFTER we know uid and the character ----------
-    // (via our Next proxy route, not the Python server directly)
+    // Pull Akasha entry (safe if API is down)
     let ak: any = null;
     try {
-        const akRes = await fetch(
-            absoluteApiUrl(`/api/akasha/${encodeURIComponent(uid)}`),
-            { cache: "no-store" }
-        );
         const akasha = akRes.ok ? await akRes.json() : null;
         ak =
             akasha?.calculations?.find(
@@ -182,12 +163,8 @@ export default async function CharacterPage({
         ak = null;
     }
 
-    const artifacts = (c.artifacts || []).map((a) => ({
-        ...a,
-        substats: normalizeSubstats(a),
-    }));
+    const artifacts = (c.artifacts || []).map((a) => ({ ...a, substats: normalizeSubstats(a) }));
 
-    // Build a tidy list of stats for the panel (order first, then any extras)
     const statOrder = [
         "Max HP",
         "ATK",
@@ -212,12 +189,12 @@ export default async function CharacterPage({
 
     return (
         <div className="card p-5">
-            {/* Akasha header row: badge + refresh button */}
-            <div className="mb-4 flex items-center gap-3">
+            {/* Akasha badge + refresh */}
+            <div className="mb-4 flex items-center gap-2">
                 {ak ? (
                     <div className="inline-flex items-center gap-2 rounded-full bg-emerald-600/10 text-emerald-700 dark:text-emerald-300 px-3 py-1 text-xs border border-emerald-600/20">
                         <span className="font-medium">Leaderboard</span>
-                        <span>Top {Number(ak.topPercent).toFixed(0)}%</span>
+                        <span>Top {Number(ak.topPercent ?? 0).toFixed(0)}%</span>
                         {ak.url ? (
                             <a
                                 href={ak.url}
@@ -234,9 +211,7 @@ export default async function CharacterPage({
                         No Akasha entry
                     </div>
                 )}
-
-                {/* Refresh button (client) */}
-                <AkashaRefreshButton uid={uid} />
+                <RefreshAkashaButton uid={uid} />
             </div>
 
             {/* header */}
@@ -262,7 +237,6 @@ export default async function CharacterPage({
             {!!Object.keys(stats).length && (
                 <div className="mt-6">
                     <div className="text-sm opacity-70 mb-2">Stats</div>
-
                     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                         {primaryStats.map((k) => (
                             <div
@@ -275,7 +249,6 @@ export default async function CharacterPage({
                                 </div>
                             </div>
                         ))}
-
                         {extraStats.map((k) => (
                             <div
                                 key={k}
@@ -291,7 +264,7 @@ export default async function CharacterPage({
                 </div>
             )}
 
-            {/* base stats panel */}
+            {/* base stats */}
             {!!c.baseStats && Object.keys(c.baseStats).length > 0 && (
                 <div className="mt-6">
                     <div className="text-sm opacity-70 mb-2">Base stats</div>
@@ -311,7 +284,7 @@ export default async function CharacterPage({
                 </div>
             )}
 
-            {/* talents panel */}
+            {/* talents */}
             {!!c.talents && (
                 <div className="mt-8">
                     <div className="text-sm opacity-70 mb-2">Talents</div>
@@ -332,9 +305,7 @@ export default async function CharacterPage({
                                     <div className="text-sm font-semibold leading-tight">
                                         {t.name ?? "—"}
                                     </div>
-                                    <div className="text-xs opacity-70 mt-1">
-                                        Level: {t.level ?? "—"}
-                                    </div>
+                                    <div className="text-xs opacity-70 mt-1">Level: {t.level ?? "—"}</div>
                                 </div>
                             );
                         })}
@@ -368,7 +339,7 @@ export default async function CharacterPage({
             {/* artifacts */}
             <div className="mt-8">
                 <div className="text-sm opacity-70 mb-3">Artifacts</div>
-                {artifacts.length === 0 ? (
+                {(!Array.isArray(artifacts) || artifacts.length === 0) ? (
                     <div className="subtle">No artifacts</div>
                 ) : (
                     <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -389,9 +360,7 @@ export default async function CharacterPage({
                                             <div className="w-12 h-12 rounded-xl bg-black/10 dark:bg-white/10" />
                                         )}
                                         <div className="min-w-0">
-                                            <div className="font-semibold truncate">
-                                                {a.set || "Unknown Set"}
-                                            </div>
+                                            <div className="font-semibold truncate">{a.set || "Unknown Set"}</div>
                                             <div className="text-xs opacity-70">
                                                 {a.slot ?? "—"} • {stars(a.rarity as number)} • +{a.level ?? 0}
                                             </div>
@@ -399,7 +368,6 @@ export default async function CharacterPage({
                                     </div>
 
                                     <div className="mt-4 grid grid-cols-5 gap-3 items-stretch">
-                                        {/* main stat */}
                                         <div className="col-span-2 rounded-xl border border-black/5 dark:border-white/5 p-3 bg-black/5 dark:bg-white/5 flex flex-col min-h-[110px]">
                                             <div className="text-[10px] uppercase opacity-70">Main Stat</div>
                                             <div className="mt-1 text-sm font-medium truncate">
@@ -410,7 +378,6 @@ export default async function CharacterPage({
                                             </div>
                                         </div>
 
-                                        {/* substats */}
                                         <div className="col-span-3 grid grid-cols-2 gap-3">
                                             {subs4.map((s, idx) => (
                                                 <div

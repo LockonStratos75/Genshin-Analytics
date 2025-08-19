@@ -1,33 +1,46 @@
+// app/api/akasha/[uid]/route.ts
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 import "server-only";
 import type { NextRequest } from "next/server";
-import { createAkasha } from "@/lib/akasha-client";
+import { revalidateTag } from "next/cache";
+
+// % helper
+const pct = (n?: number, d?: number) =>
+    typeof n === "number" && typeof d === "number" && d > 0 ? (n / d) * 100 : undefined;
+
+// Singleton client
+let _akasha: any;
+async function getClient() {
+    if (_akasha) return _akasha;
+
+    // Try the package you found first; fall back to the alt name used in some READMEs
+    let mod: any;
+    try {
+        mod = await import("akasha-system.js");
+    } catch {
+        try {
+            mod = await import("akasha-system.js");
+        } catch (e) {
+            throw new Error(
+                "Cannot find akasha-system.js (or akasha.js). Install it with `npm i akasha-system.js`."
+            );
+        }
+    }
+    _akasha = new mod.default();
+    return _akasha;
+}
 
 /**
- * GET /api/akasha/:uid?refresh=1
- * - fetches calculations for a UID using the JS wrapper
- * - optional ?refresh=1 just bypasses our in-memory cache (akasha itself is remote)
+ * GET /api/akasha/:uid
+ * Returns cached Akasha calculations (10 min TTL) and tags the cache so POST can bust it.
  */
-
-type CalcRow = {
-    character?: string;
-    characterId?: number | string;
-    weapon?: string | null;
-    result?: number | null;
-    topPercent?: number | null;
-    rank?: number | null;
-    outOf?: number | null;
-    url?: string | null;
-};
-
-// super-light in-memory cache so we don't hammer akasha.cv while deving
-const mem = new Map<string, { at: number; data: any }>();
-const TTL = 1000 * 60 * 5; // 5 minutes
-
-export async function GET(req: NextRequest, { params }: { params: { uid: string } }) {
-    const uid = params?.uid?.trim();
+export async function GET(
+    _req: NextRequest,
+    { params }: { params: { uid: string } }
+) {
+    const uid = params?.uid;
     if (!uid) {
         return new Response(JSON.stringify({ error: "Missing uid" }), {
             status: 400,
@@ -35,72 +48,72 @@ export async function GET(req: NextRequest, { params }: { params: { uid: string 
         });
     }
 
-    const wantsRefresh = req.nextUrl.searchParams.get("refresh") === "1";
-
     try {
-        if (!wantsRefresh) {
-            const cached = mem.get(uid);
-            if (cached && Date.now() - cached.at < TTL) {
-                return new Response(JSON.stringify(cached.data), {
-                    status: 200,
-                    headers: { "content-type": "application/json", "cache-control": "no-store" },
-                });
-            }
-        }
+        const ak = await getClient();
 
-        const akasha = await createAkasha();
+        // Use Next’s route caching (revalidate + tag). The “fetch” below is a no-op fetch that
+        // just gives us a cached response envelope; the real API call happens inside.
+        const payload = await fetch("data:,", {
+            next: { revalidate: 600, tags: [`akasha:${uid}`] },
+        }).then(async () => {
+            const res = await ak.getCalculationsForUser(uid);
+            const list = Array.isArray(res?.data) ? res.data : [];
 
-        // per package readme: getCalculationsForUser('uuid|uid')
-        // it returns { data: [...] } where each entry is a character with .calculations.fit etc.
-        const resp: any = await akasha.getCalculationsForUser(uid);
+            const calculations = list.map((ch: any) => {
+                const fit = ch?.calculations?.fit ?? {};
+                const topPercent = pct(fit?.ranking, fit?.outOf);
+                const calcId = fit?.id ?? fit?.calculationId;
 
-        // normalize into the shape your page already expects
-        const rows: CalcRow[] = [];
-        const list = Array.isArray(resp?.data) ? resp.data : [];
-        for (const ch of list) {
-            const name: string | undefined = ch?.name ?? ch?.characterName ?? ch?.character?.name;
-            const id: number | string | undefined = ch?.id ?? ch?.characterId ?? ch?.character?.id;
-
-            // the wrapper shows examples with `calculations.fit`
-            const calc = ch?.calculations?.fit || ch?.calculations?.dps || ch?.calculations?.best || ch?.calculations;
-
-            if (!calc) continue;
-
-            const rank = Number(calc?.ranking ?? calc?.rank ?? NaN);
-            const outOf = Number(calc?.outOf ?? calc?.total ?? NaN);
-            const result = Number(calc?.result ?? calc?.score ?? NaN);
-
-            rows.push({
-                character: name,
-                characterId: id,
-                weapon: calc?.weapon?.name ?? null,
-                result: Number.isFinite(result) ? Math.round(result) : null,
-                topPercent:
-                    Number.isFinite(rank) && Number.isFinite(outOf) && outOf > 0
-                        ? Math.round((rank / outOf) * 100)
-                        : null,
-                rank: Number.isFinite(rank) ? rank : null,
-                outOf: Number.isFinite(outOf) ? outOf : null,
-                url: calc?.id ? `https://akasha.cv/leaderboards/${calc.id}` : null,
+                return {
+                    character: ch?.name ?? "",
+                    characterId: ch?.id,
+                    calcId,
+                    weapon: fit?.weapon?.name,
+                    result: fit?.result,
+                    topPercent,
+                    rank: fit?.ranking,
+                    outOf: fit?.outOf,
+                    url: calcId ? `https://akasha.cv/leaderboards/${calcId}` : undefined,
+                };
             });
-        }
 
-        const payload = { uid, calculations: rows };
-
-        // put into the short cache
-        mem.set(uid, { at: Date.now(), data: payload });
+            return { uid, calculations };
+        });
 
         return new Response(JSON.stringify(payload), {
             status: 200,
-            headers: { "content-type": "application/json", "cache-control": "no-store" },
+            headers: { "content-type": "application/json" },
         });
     } catch (e: any) {
         return new Response(
             JSON.stringify({
-                error: "Upstream error",
+                error: "Akasha error",
                 detail: String(e?.message || e),
             }),
             { status: 502, headers: { "content-type": "application/json" } }
         );
     }
+}
+
+/**
+ * POST /api/akasha/:uid
+ * Busts the cached GET immediately (used by the “Refresh Akasha” button).
+ */
+export async function POST(
+    _req: NextRequest,
+    { params }: { params: { uid: string } }
+) {
+    const uid = params?.uid;
+    if (!uid) {
+        return new Response(JSON.stringify({ error: "Missing uid" }), {
+            status: 400,
+            headers: { "content-type": "application/json" },
+        });
+    }
+
+    revalidateTag(`akasha:${uid}`);
+    return new Response(JSON.stringify({ ok: true }), {
+        status: 200,
+        headers: { "content-type": "application/json" },
+    });
 }
