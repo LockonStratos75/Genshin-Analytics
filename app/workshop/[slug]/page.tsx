@@ -1,18 +1,24 @@
 // path: app/workshop/[slug]/page.tsx
-import 'server-only';
-import type { Metadata } from 'next';
-import db from '@/data/workshop-db.json';
+import "server-only";
+import type { Metadata } from "next";
+import db from "@/data/workshop-db.json";
 
 type Guide = {
     slug: string;
     name: string;
     element?: string;
     weapon_type?: string;
-    ['role(s)']?: string[];
+    ["role(s)"]?: string[];
     lore?: { short?: string };
-    weapons?: Array<{ name: string; rarity?: string; recommended_refinement?: string; rank?: number; notes?: string }>;
+    weapons?: Array<{
+        name: string;
+        rarity?: string;
+        recommended_refinement?: string;
+        rank?: number;
+        notes?: string;
+    }>;
     artifacts?: Array<{ set: string; notes?: string }>;
-    main_stats?: Record<'Sands' | 'Goblet' | 'Circlet', string>;
+    main_stats?: Record<"Sands" | "Goblet" | "Circlet", string>;
     substats_priority?: string[];
     er_requirements?: Array<{ condition: string; value: string }>;
     talent_priority?: string[];
@@ -21,11 +27,118 @@ type Guide = {
     materials?: { character_ascension?: string[]; talent_ascension?: string[] };
 };
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
     const g = (db as Guide[]).find((x) => x.slug === params.slug);
-    return { title: g ? `${g.name} • Paimon’s Workshop` : 'Paimon’s Workshop' };
+    return { title: g ? `${g.name} • Paimon’s Workshop` : "Paimon’s Workshop" };
+}
+
+/* ---------- filename helpers (match your local .webp names) ---------- */
+
+function toWebpFilename(display: string) {
+    let x = (display || "")
+        .normalize("NFKD")
+        .replace(/[\u2018\u2019]/g, "'")
+        .replace(/[–—-]/g, "_")
+        .replace(/\s+/g, "_");
+    x = x.replace(/[^A-Za-z0-9_']/g, "_");
+    x = x.replace(/_+/g, "_").replace(/^_+|_+$/g, "");
+    return `${x}.webp`;
+}
+
+function charIcon(name: string) {
+    return `/character_imgs/${encodeURIComponent(toWebpFilename(name))}`;
+}
+function weaponIcon(name: string) {
+    return `/weapons_imgs/${encodeURIComponent(toWebpFilename(name))}`;
+}
+
+/** Strip "2pc/4pc" etc. and split combos; then use first set name for the icon. */
+function extractArtifactSetName(label: string) {
+    let s = (label || "").trim();
+    s = s.replace(/\b(\d+)\s*[- ]*\s*(?:pc|piece|pieces)\b/gi, "").trim();
+    const first = s.split(/\s*(?:\+|\/|,|&|\band\b)\s*/i)[0]?.trim() || s;
+    return first.replace(/\s{2,}/g, " ");
+}
+function artifactIcon(label: string) {
+    const setName = extractArtifactSetName(label);
+    return `/artifact_imgs/${encodeURIComponent(toWebpFilename(setName))}`;
+}
+
+/* ---------- team member name → icon resolver (handles short/alias/combined) ---------- */
+
+const CHAR_ALIASES: Record<string, string> = {
+    // Archons / multi-word
+    "raiden": "Raiden Shogun",
+    "shogun": "Raiden Shogun",
+    "ei": "Raiden Shogun",
+    "yae": "Yae Miko",
+    "nahida": "Nahida",
+    "zhongli": "Zhongli",
+    "venti": "Venti",
+    "furina": "Furina",
+    "focalors": "Furina",
+
+    // First-name → full-name
+    "sara": "Kujou Sara",
+    "kazu": "Kaedehara Kazuha",
+    "kazuha": "Kaedehara Kazuha",
+    "ayaka": "Kamisato Ayaka",
+    "ayato": "Kamisato Ayato",
+    "kokomi": "Sangonomiya Kokomi",
+    "heizou": "Shikanoin Heizou",
+    "shinobu": "Kuki Shinobu",
+    "itto": "Arataki Itto",
+    "hutao": "Hu Tao",
+    "hu tao": "Hu Tao",
+    "scaramouche": "Wanderer",
+    "wanderer": "Wanderer",
+    "childe": "Tartaglia",
+
+    // Common short names/alts that already match
+    "xingqiu": "Xingqiu",
+    "yelan": "Yelan",
+    "bennett": "Bennett",
+    "baizhu": "Baizhu",
+    "yaoyao": "Yaoyao",
+    "sara c6 preferred": "Kujou Sara",
+};
+
+function titleCase(s: string) {
+    return s
+        .toLowerCase()
+        .split(/[\s_-]+/)
+        .filter(Boolean)
+        .map((t) => t.charAt(0).toUpperCase() + t.slice(1))
+        .join(" ");
+}
+
+/**
+ * Given something like "Xingqiu/Yelan", "Sara (C6 preferred)", "Raiden (EM build)",
+ * return a local image path that most likely exists.
+ */
+function teamMemberIcon(raw: string) {
+    const base = (raw || "")
+        .replace(/\([^)]*\)/g, " ") // strip (...) notes
+        .replace(/\s+/g, " ")
+        .trim();
+
+    // Try first candidate among split tokens
+    const candidates = base.split(/\s*(?:\/|,|\+|&|\band\b|\bor\b)\s*/i).filter(Boolean);
+
+    for (const cand of candidates) {
+        const key = cand.toLowerCase().trim();
+        const mapped = CHAR_ALIASES[key] || CHAR_ALIASES[key.replace(/\s+/g, " ")] || undefined;
+
+        const canonical = mapped || titleCase(cand.trim());
+
+        // Prefer canonical directly
+        return charIcon(canonical);
+    }
+
+    // Fallback: original raw name normalized (unlikely to exist, but safe)
+    return charIcon(titleCase(base));
 }
 
 function pill(s: string) {
@@ -35,6 +148,8 @@ function pill(s: string) {
     </span>
     );
 }
+
+/* ------------------------------ page ------------------------------ */
 
 export default async function Page({ params }: { params: { slug: string } }) {
     const guides = db as Guide[];
@@ -48,8 +163,6 @@ export default async function Page({ params }: { params: { slug: string } }) {
         );
     }
 
-    const characterIconSrc = `/api/workshop/image?q=${encodeURIComponent(`${g.name} icon genshin impact wiki`)}`;
-
     return (
         <div className="space-y-10">
             {/* Header */}
@@ -60,11 +173,14 @@ export default async function Page({ params }: { params: { slug: string } }) {
                     <div className="mt-3 flex flex-wrap gap-2">
                         {g.element ? pill(g.element) : null}
                         {g.weapon_type ? pill(g.weapon_type) : null}
-                        {(g['role(s)'] ?? []).map((r) => <span key={r}>{pill(r)}</span>)}
+                        {(g["role(s)"] ?? []).map((r) => (
+                            <span key={r}>{pill(r)}</span>
+                        ))}
                     </div>
                 </div>
+
                 <img
-                    src={characterIconSrc}
+                    src={charIcon(g.name)}
                     alt={g.name}
                     className="h-20 w-20 rounded-2xl object-cover border border-white/10 bg-white/5"
                 />
@@ -78,30 +194,27 @@ export default async function Page({ params }: { params: { slug: string } }) {
                         {g.weapons
                             .slice()
                             .sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99))
-                            .map((w) => {
-                                const iconSrc = `/api/workshop/image?q=${encodeURIComponent(`${w.name} weapon icon genshin impact wiki`)}`;
-                                return (
-                                    <div
-                                        key={`${w.rank}-${w.name}`}
-                                        className="flex gap-3 rounded-2xl border border-white/5 bg-white/5 p-4"
-                                    >
-                                        <img src={iconSrc} alt={w.name} className="h-12 w-12 rounded-xl object-cover" />
-                                        <div className="min-w-0">
-                                            <div className="font-medium">
-                                                {w.rank ? `${w.rank}. ` : ''}
-                                                {w.name}{' '}
-                                                <span className="text-xs opacity-70 ml-1">{w.rarity ?? ''}</span>
-                                                {w.recommended_refinement ? (
-                                                    <span className="text-[10px] ml-2 rounded px-1.5 py-0.5 bg-white/10">
-                            Ref {w.recommended_refinement}
-                          </span>
-                                                ) : null}
-                                            </div>
-                                            {w.notes ? <div className="opacity-80 text-sm">{w.notes}</div> : null}
+                            .map((w) => (
+                                <div
+                                    key={`${w.rank}-${w.name}`}
+                                    className="flex gap-3 rounded-2xl border border-white/5 bg-white/5 p-4"
+                                >
+                                    <img src={weaponIcon(w.name)} alt={w.name} className="h-12 w-12 rounded-xl object-cover" />
+                                    <div className="min-w-0">
+                                        <div className="font-medium">
+                                            {w.rank ? `${w.rank}. ` : ""}
+                                            {w.name}{" "}
+                                            <span className="text-xs opacity-70 ml-1">{w.rarity ?? ""}</span>
+                                            {w.recommended_refinement ? (
+                                                <span className="text-[10px] ml-2 rounded px-1.5 py-0.5 bg-white/10">
+                          Ref {w.recommended_refinement}
+                        </span>
+                                            ) : null}
                                         </div>
+                                        {w.notes ? <div className="opacity-80 text-sm">{w.notes}</div> : null}
                                     </div>
-                                );
-                            })}
+                                </div>
+                            ))}
                     </div>
                 </section>
             )}
@@ -111,7 +224,6 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 <section id="artifacts" className="space-y-4">
                     <h2 className="text-xl font-semibold">Best Artifact Sets (1→5)</h2>
 
-                    {/* Stat priority box */}
                     {(g.main_stats || g.substats_priority || g.er_requirements) && (
                         <div className="rounded-2xl border border-white/5 bg-white/5 p-4">
                             <div className="font-medium">Stat Priority</div>
@@ -136,7 +248,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                             {g.substats_priority?.length ? (
                                 <div className="mt-3 text-sm">
                                     <span className="opacity-60 mr-1">Substats:</span>
-                                    {g.substats_priority.join(' → ')}
+                                    {g.substats_priority.join(" → ")}
                                 </div>
                             ) : null}
                             {g.er_requirements?.length ? (
@@ -155,12 +267,10 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
                     <div className="grid gap-4 md:grid-cols-2">
                         {g.artifacts.map((a, i) => {
-                            const artIcon = `/api/workshop/image?q=${encodeURIComponent(
-                                `${a.set} artifact flower icon genshin impact wiki`,
-                            )}`;
+                            const iconSrc = artifactIcon(a.set);
                             return (
                                 <div key={`${i}-${a.set}`} className="flex gap-3 rounded-2xl border border-white/5 bg-white/5 p-4">
-                                    <img src={artIcon} alt={a.set} className="h-12 w-12 rounded-xl object-cover" />
+                                    <img src={iconSrc} alt={a.set} className="h-12 w-12 rounded-xl object-cover" />
                                     <div className="min-w-0">
                                         <div className="font-medium">{`${i + 1}. ${a.set}`}</div>
                                         {a.notes ? <div className="opacity-80 text-sm">{a.notes}</div> : null}
@@ -172,7 +282,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 </section>
             )}
 
-            {/* Teams */}
+            {/* Teams (with robust icon resolver) */}
             {!!g.team_comps?.length && (
                 <section id="teams" className="space-y-4">
                     <h2 className="text-xl font-semibold">Best Team Compositions</h2>
@@ -184,7 +294,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                                     {t.members.map((m, idx) => (
                                         <div key={`${t.name}-${m.name}-${idx}`} className="flex items-center gap-3">
                                             <img
-                                                src={`/api/workshop/image?q=${encodeURIComponent(`${m.name} icon genshin impact wiki`)}`}
+                                                src={teamMemberIcon(m.name)}
                                                 alt={m.name}
                                                 className="h-9 w-9 rounded-lg object-cover border border-white/10 bg-white/5"
                                             />
@@ -202,7 +312,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 </section>
             )}
 
-            {/* Pros & Cons */}
+            {/* Pros/Cons & Materials */}
             {(g.pros_cons?.pros?.length || g.pros_cons?.cons?.length) && (
                 <section id="proscons" className="space-y-4">
                     <h2 className="text-xl font-semibold">Pros & Cons</h2>
@@ -231,7 +341,6 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 </section>
             )}
 
-            {/* Materials */}
             {(g.materials?.character_ascension?.length || g.materials?.talent_ascension?.length) && (
                 <section id="materials" className="space-y-4">
                     <h2 className="text-xl font-semibold">Ascension & Materials</h2>

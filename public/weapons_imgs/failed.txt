@@ -1,0 +1,5 @@
+Azurelight	https://ar-cs.aza.gg/g/genshin/UI/UI_EquipIcon_Sword_OuterSword.webp	404
+Quartz	https://ar-cs.aza.gg/g/genshin/UI/UI_EquipIcon_Claymore_Quartz.webp	404
+The Flagstaff	https://ar-cs.aza.gg/g/genshin/UI/UI_EquipIcon_Pole_Flagpole.webp	404
+Amber Bead	https://ar-cs.aza.gg/g/genshin/UI/UI_EquipIcon_Catalyst_Amber.webp	404
+Ebony Bow	https://ar-cs.aza.gg/g/genshin/UI/UI_EquipIcon_Bow_Hardwood.webp	404

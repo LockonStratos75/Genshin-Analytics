@@ -1,14 +1,30 @@
-// components/workshop/WorkshopSearch.tsx
+// path: components/workshop/WorkshopSearch.tsx
 "use client";
 
 import * as React from "react";
 import Link from "next/link";
-import MultiSourceImg from "@/components/MultiSourceImg";
 
 type Guide = any;
 
 const ELEMENTS = ["Pyro","Hydro","Electro","Cryo","Anemo","Geo","Dendro"] as const;
 const WEAPONS  = ["Sword","Claymore","Polearm","Bow","Catalyst"] as const;
+
+/** Convert display name to your local WebP filename (e.g. "Hu Tao" -> "Hu_Tao.webp") */
+function toWebpFilename(displayName: string) {
+    let x = (displayName || "")
+        .normalize("NFKD")
+        .replace(/[\u2018\u2019]/g, "'") // curly quotes -> '
+        .replace(/[–—-]/g, "_")          // dashes -> _
+        .replace(/\s+/g, "_");           // spaces -> _
+    x = x.replace(/[^A-Za-z0-9_']/g, "_"); // keep A-Z a-z 0-9 _ '
+    x = x.replace(/_+/g, "_").replace(/^_+|_+$/g, "");
+    return `${x}.webp`;
+}
+
+function charIconSrc(name: string) {
+    const fname = toWebpFilename(name);
+    return `/character_imgs/${encodeURIComponent(fname)}`;
+}
 
 export default function WorkshopSearch() {
     const [q, setQ] = React.useState("");
@@ -55,13 +71,19 @@ export default function WorkshopSearch() {
                     value={q}
                     onChange={(e) => setQ(e.target.value)}
                 />
-                <select className="rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2"
-                        value={el} onChange={(e) => setEl(e.target.value)}>
+                <select
+                    className="rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2"
+                    value={el}
+                    onChange={(e) => setEl(e.target.value)}
+                >
                     <option value="">All elements</option>
                     {ELEMENTS.map((x) => <option key={x} value={x}>{x}</option>)}
                 </select>
-                <select className="rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2"
-                        value={wp} onChange={(e) => setWp(e.target.value)}>
+                <select
+                    className="rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-2"
+                    value={wp}
+                    onChange={(e) => setWp(e.target.value)}
+                >
                     <option value="">All weapon types</option>
                     {WEAPONS.map((x) => <option key={x} value={x}>{x}</option>)}
                 </select>
@@ -86,32 +108,38 @@ export default function WorkshopSearch() {
                     </div>
                 ) : (
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                        {filtered.map((g: any) => (
-                            <Link
-                                key={g.slug}
-                                href={`/workshop/${g.slug}`}
-                                className="group rounded-2xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-white/5 backdrop-blur-sm p-4 flex items-center gap-3 hover:shadow-md hover:border-black/20 dark:hover:border-white/20 transition"
-                            >
-                                <MultiSourceImg
-                                    srcs={g.iconCandidates ?? []}
-                                    alt={g.name}
-                                    width={56}
-                                    height={56}
-                                    className="w-14 h-14 rounded-xl object-cover"
-                                />
-                                <div className="min-w-0">
-                                    <div className="font-semibold leading-tight">{g.name}</div>
-                                    <div className="text-xs opacity-70">{g.element} • {g.weapon_type}</div>
-                                    <div className="mt-1 flex flex-wrap gap-1.5">
-                                        {(g["role(s)"] || []).slice(0, 3).map((r: string, i: number) => (
-                                            <span key={i} className="text-[10px] px-1.5 py-0.5 rounded-full bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/10">
-                        {r}
-                      </span>
-                                        ))}
+                        {filtered.map((g: any) => {
+                            const icon = charIconSrc(g.name);
+                            return (
+                                <Link
+                                    key={g.slug}
+                                    href={`/workshop/${g.slug}`}
+                                    className="group rounded-2xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-white/5 backdrop-blur-sm p-4 flex items-center gap-3 hover:shadow-md hover:border-black/20 dark:hover:border-white/20 transition"
+                                >
+                                    <img
+                                        src={icon}
+                                        alt={g.name}
+                                        width={56}
+                                        height={56}
+                                        className="w-14 h-14 rounded-xl object-cover"
+                                    />
+                                    <div className="min-w-0">
+                                        <div className="font-semibold leading-tight">{g.name}</div>
+                                        <div className="text-xs opacity-70">{g.element} • {g.weapon_type}</div>
+                                        <div className="mt-1 flex flex-wrap gap-1.5">
+                                            {(g["role(s)"] || []).slice(0, 3).map((r: string, i: number) => (
+                                                <span
+                                                    key={i}
+                                                    className="text-[10px] px-1.5 py-0.5 rounded-full bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/10"
+                                                >
+                          {r}
+                        </span>
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
-                            </Link>
-                        ))}
+                                </Link>
+                            );
+                        })}
                     </div>
                 )}
             </div>
