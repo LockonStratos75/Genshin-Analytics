@@ -1,0 +1,3473 @@
+[
+  {
+    "slug": "raiden-shogun",
+    "name": "Raiden Shogun",
+    "element": "Electro",
+    "weapon_type": "Polearm",
+    "role(s)": [
+      "Main DPS (Burst Hypercarry)",
+      "Battery",
+      "Off-field DPS / Driver",
+      "Hyperbloom Trigger"
+    ],
+    "lore": {
+      "short": "The Electro Archon who governs Inazuma, excelling at team battery and devastating Burst windows."
+    },
+    "weapons": [
+      {
+        "name": "Engulfing Lightning",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 1,
+        "notes": "Best-in-slot for hypercarry; ER→ATK conversion and extra ER on Burst."
+      },
+      {
+        "name": "The Catch",
+        "rarity": "4★",
+        "recommended_refinement": "R5",
+        "rank": 2,
+        "notes": "Top F2P for Burst DPS; easy to reach ER goals."
+      },
+      {
+        "name": "Wavebreaker's Fin",
+        "rarity": "4★",
+        "recommended_refinement": "R1+",
+        "rank": 3,
+        "notes": "High Burst DMG if team has large energy costs."
+      },
+      {
+        "name": "Staff of Homa",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 4,
+        "notes": "Strong stat stick for personal damage when ER is covered."
+      },
+      {
+        "name": "Dragon's Bane",
+        "rarity": "4★",
+        "recommended_refinement": "R1+",
+        "rank": 5,
+        "notes": "For EM Hyperbloom builds; not for hypercarry."
+      }
+    ],
+    "artifacts": [
+      {
+        "set": "4pc Emblem of Severed Fate",
+        "notes": "Best general set for Burst hypercarry; scales with ER."
+      },
+      {
+        "set": "4pc Flower of Paradise Lost",
+        "notes": "Best for EM Hyperbloom trigger builds."
+      },
+      {
+        "set": "4pc Gilded Dreams",
+        "notes": "Efficient alt for EM Hyperbloom; easier to farm."
+      }
+    ],
+    "main_stats": {
+      "Sands": "ATK% (or ER% if using Engulfing or short rotations) / EM (Hyperbloom)",
+      "Goblet": "Electro DMG% / EM (Hyperbloom)",
+      "Circlet": "CRIT Rate/DMG / EM (Hyperbloom)"
+    },
+    "substats_priority": [
+      "ER until requirement",
+      "CRIT Rate/DMG",
+      "ATK%",
+      "EM (if Hyperbloom)"
+    ],
+    "er_requirements": [
+      {
+        "condition": "Burst hypercarry (general)",
+        "value": "≈200–250% ER"
+      },
+      {
+        "condition": "Hyperbloom trigger (Burst less critical)",
+        "value": "≈130–160% ER"
+      }
+    ],
+    "talent_priority": [
+      "Burst > Skill > Normal Attack"
+    ],
+    "team_comps": [
+      {
+        "name": "Raiden National (Rational)",
+        "members": [
+          {
+            "name": "Raiden",
+            "role": "Main DPS + Battery"
+          },
+          {
+            "name": "Xiangling",
+            "role": "Off-field Pyro DPS"
+          },
+          {
+            "name": "Xingqiu",
+            "role": "Off-field Hydro + Vape enabling"
+          },
+          {
+            "name": "Bennett",
+            "role": "ATK buff + heals"
+          }
+        ],
+        "notes": "High Burst uptime and reaction damage; Raiden refills teammates."
+      },
+      {
+        "name": "Raiden Hypercarry",
+        "members": [
+          {
+            "name": "Raiden",
+            "role": "On-field Burst DPS"
+          },
+          {
+            "name": "Kazuha",
+            "role": "VV shred + Elemental DMG buff"
+          },
+          {
+            "name": "Sara (C6 preferred)",
+            "role": "Big ATK/Electro buffs"
+          },
+          {
+            "name": "Bennett",
+            "role": "ATK buff + heals"
+          }
+        ],
+        "notes": "Frontloads Raiden’s Burst; very strong with Sara C6 and Raiden C2."
+      },
+      {
+        "name": "Raiden Hyperbloom",
+        "members": [
+          {
+            "name": "Raiden",
+            "role": "Hyperbloom trigger (EM build)"
+          },
+          {
+            "name": "Nahida",
+            "role": "Strong Dendro application"
+          },
+          {
+            "name": "Xingqiu/Yelan",
+            "role": "Hydro application"
+          },
+          {
+            "name": "Baizhu/Yaoyao",
+            "role": "Heals + Dendro sustain"
+          }
+        ],
+        "notes": "Raiden triggers Hyperblooms reliably; EM build + EM sets recommended."
+      }
+    ],
+    "pros_cons": {
+      "pros": [
+        "Top-tier battery",
+        "Huge Burst nuke",
+        "Flexible teams (Electro, Hyperbloom, Overload)"
+      ],
+      "cons": [
+        "Wants high ER for best results",
+        "Knockback with Overload teams can be annoying",
+        "Relies on teammates’ Bursts for Resolve stacks"
+      ],
+      "playstyle_notes": [
+        "Coordinate buffs before Burst",
+        "Use Skill before swapping to build Resolve",
+        "Funnel particles to Raiden pre-Burst"
+      ]
+    },
+    "materials": {
+      "character_ascension": [
+        "Vajrada Amethyst (Electro)",
+        "Storm Beads",
+        "Amakumo Fruit",
+        "Handguards (Old/Kageuchi/Famed)"
+      ],
+      "talent_ascension": [
+        "Teachings/Guide/Philosophies of Light",
+        "Handguards (Old/Kageuchi/Famed)",
+        "Molten Moment (La Signora)"
+      ]
+    }
+  },
+  {
+    "slug": "furina",
+    "name": "Furina",
+    "element": "Hydro",
+    "weapon_type": "Sword",
+    "role(s)": [
+      "Off-field DPS",
+      "Buffer",
+      "On-field Driver (situational)"
+    ],
+    "lore": {
+      "short": "Fontaine’s Hydro Archon. Provides powerful off-field damage and teamwide buffs tied to HP fluctuations."
+    },
+    "weapons": [
+      {
+        "name": "Splendor of Tranquil Waters",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 1,
+        "notes": "Signature; excellent personal damage and synergy."
+      },
+      {
+        "name": "Key of Khaj-Nisut",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 2,
+        "notes": "HP% and EM sharing; strong team buffing option."
+      },
+      {
+        "name": "Primordial Jade Cutter",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 3,
+        "notes": "High CRIT stat stick when ER is covered."
+      },
+      {
+        "name": "Favonius Sword",
+        "rarity": "4★",
+        "recommended_refinement": "R3+",
+        "rank": 4,
+        "notes": "Utility option that eases team ER needs."
+      }
+    ],
+    "artifacts": [
+      {
+        "set": "4pc Golden Troupe",
+        "notes": "Best for off-field Skill damage uptime."
+      },
+      {
+        "set": "4pc Noblesse Oblige",
+        "notes": "Team-buffer set when personal damage is secondary."
+      },
+      {
+        "set": "2pc HP% + 2pc Hydro DMG% (or Golden Troupe 2pc)",
+        "notes": "Early/mixed alternative if chasing substats."
+      }
+    ],
+    "main_stats": {
+      "Sands": "HP% (or ER% if Burst every rotation is tight)",
+      "Goblet": "HP% or Hydro DMG% (depends on role/ratios)",
+      "Circlet": "CRIT Rate/DMG"
+    },
+    "substats_priority": [
+      "ER until requirement",
+      "CRIT Rate/DMG",
+      "HP%"
+    ],
+    "er_requirements": [
+      {
+        "condition": "General off-field buffer/DPS",
+        "value": "≈120–160% ER"
+      },
+      {
+        "condition": "Frequent Burst teams without extra batteries",
+        "value": "≈150–180% ER"
+      }
+    ],
+    "talent_priority": [
+      "Skill > Burst > Normal Attack"
+    ],
+    "team_comps": [
+      {
+        "name": "Neuvillette + Furina",
+        "members": [
+          {
+            "name": "Neuvillette",
+            "role": "On-field DPS"
+          },
+          {
+            "name": "Furina",
+            "role": "Off-field DPS + buff"
+          },
+          {
+            "name": "Kazuha/Sucrose",
+            "role": "VV shred + grouping"
+          },
+          {
+            "name": "Zhongli/Healer",
+            "role": "Shield or healing for comfort"
+          }
+        ],
+        "notes": "HP fluctuation enables Marechaussee stacks and Furina’s team buffs; strong synergy."
+      },
+      {
+        "name": "Hu Tao Double Hydro (Furina var.)",
+        "members": [
+          {
+            "name": "Hu Tao",
+            "role": "Main DPS"
+          },
+          {
+            "name": "Yelan/Xingqiu",
+            "role": "Off-field Hydro"
+          },
+          {
+            "name": "Furina",
+            "role": "Off-field DMG + buff"
+          },
+          {
+            "name": "Zhongli",
+            "role": "Shield"
+          }
+        ],
+        "notes": "High single-target; manage Hu Tao’s HP carefully with Furina’s draining."
+      }
+    ],
+    "pros_cons": {
+      "pros": [
+        "Big team damage buffs",
+        "Strong off-field damage",
+        "Enables MH (Marechaussee) stacks in many teams"
+      ],
+      "cons": [
+        "Wants reliable healing",
+        "ER checks for frequent Burst",
+        "Positioning for Skill turrets matters"
+      ],
+      "playstyle_notes": [
+        "Stay in Ousia for off-field damage; swap stances if emergency healing is needed",
+        "Time Burst to maximize team buff windows"
+      ]
+    },
+    "materials": {
+      "character_ascension": [
+        "Varunada Lazurite (Hydro)",
+        "Water that Failed to Transcend",
+        "Lakelight Lily",
+        "Whopperflower Nectars (all tiers)"
+      ],
+      "talent_ascension": [
+        "Teachings/Guide/Philosophies of Justice",
+        "Whopperflower Nectars (all tiers)",
+        "Lightless Mass (All-Devouring Narwhal)"
+      ]
+    }
+  },
+  {
+    "slug": "neuvillette",
+    "name": "Neuvillette",
+    "element": "Hydro",
+    "weapon_type": "Catalyst",
+    "role(s)": [
+      "Main DPS (Charged Attack)",
+      "On-field Carry"
+    ],
+    "lore": {
+      "short": "Chief Justice of Fontaine. Devastating HP-scaling Charged Attacks and top synergy with Furina."
+    },
+    "weapons": [
+      {
+        "name": "Tome of the Eternal Flow",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 1,
+        "notes": "Signature; best CA damage and HP synergy."
+      },
+      {
+        "name": "The Widsith",
+        "rarity": "4★",
+        "recommended_refinement": "R5",
+        "rank": 2,
+        "notes": "High DPS with rotation-friendly buffs."
+      },
+      {
+        "name": "Flowing Purity",
+        "rarity": "4★",
+        "recommended_refinement": "R5",
+        "rank": 3,
+        "notes": "Strong craftable option for sustained CA damage."
+      },
+      {
+        "name": "Skyward Atlas",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 4,
+        "notes": "Solid stat stick when you lack signature."
+      }
+    ],
+    "artifacts": [
+      {
+        "set": "4pc Marechaussee Hunter",
+        "notes": "BiS with HP fluctuation; huge CA value."
+      },
+      {
+        "set": "2pc HP% + 2pc Hydro DMG%",
+        "notes": "Flexible two-piece mix if substats are superior."
+      },
+      {
+        "set": "4pc Heart of Depth",
+        "notes": "Usable alternative if MH pieces lack."
+      }
+    ],
+    "main_stats": {
+      "Sands": "HP%",
+      "Goblet": "Hydro DMG%",
+      "Circlet": "CRIT Rate/DMG"
+    },
+    "substats_priority": [
+      "CRIT Rate/DMG",
+      "HP%",
+      "ER (until requirement)"
+    ],
+    "er_requirements": [
+      {
+        "condition": "Solo Hydro w/ Burst every rotation",
+        "value": "≈110–130% ER"
+      },
+      {
+        "condition": "With Furina or extra particles",
+        "value": "≈100–120% ER"
+      }
+    ],
+    "talent_priority": [
+      "Normal Attack (for CA) > Burst > Skill"
+    ],
+    "team_comps": [
+      {
+        "name": "Neuvillette Hypercarry (Furina core)",
+        "members": [
+          {
+            "name": "Neuvillette",
+            "role": "On-field CA DPS"
+          },
+          {
+            "name": "Furina",
+            "role": "Off-field DMG + team buff"
+          },
+          {
+            "name": "Kazuha",
+            "role": "VV shred + grouping"
+          },
+          {
+            "name": "Zhongli",
+            "role": "Shield + universal RES shred"
+          }
+        ],
+        "notes": "Stable CA channels with shield; massive Hydro DPS."
+      },
+      {
+        "name": "Mono Hydro Variation",
+        "members": [
+          {
+            "name": "Neuvillette",
+            "role": "On-field DPS"
+          },
+          {
+            "name": "Furina",
+            "role": "Buff + off-field"
+          },
+          {
+            "name": "Yelan",
+            "role": "Off-field Hydro + ramping buff"
+          },
+          {
+            "name": "Kazuha",
+            "role": "VV shred"
+          }
+        ],
+        "notes": "Stacks Hydro buffs; careful with ER if no healer."
+      }
+    ],
+    "pros_cons": {
+      "pros": [
+        "Top-tier single-target and AoE CA damage",
+        "Low ER needs",
+        "Pairs exceptionally with Furina"
+      ],
+      "cons": [
+        "Wants interruption resistance (shield)",
+        "CA positioning & aiming matter",
+        "Self-healing timing via Burst"
+      ],
+      "playstyle_notes": [
+        "Tap Skill then CA beams; weave Burst for healing/particles",
+        "Keep HP fluctuations for MH stacks"
+      ]
+    },
+    "materials": {
+      "character_ascension": [
+        "Varunada Lazurite (Hydro)",
+        "Fontemer Unihorn",
+        "Lumitoile",
+        "Transoceanic Pearls/Chunks/Crystals"
+      ],
+      "talent_ascension": [
+        "Teachings/Guide/Philosophies of Equity",
+        "Transoceanic drops",
+        "Lightless Eye of the Maelstrom (All-Devouring Narwhal)"
+      ]
+    }
+  },
+  {
+    "slug": "nahida",
+    "name": "Nahida",
+    "element": "Dendro",
+    "weapon_type": "Catalyst",
+    "role(s)": [
+      "Off-field Dendro Enabler",
+      "On-field Driver",
+      "Buffer"
+    ],
+    "lore": {
+      "short": "The Dendro Archon. Unmatched Dendro application with EM-scaling damage and strong team buffs."
+    },
+    "weapons": [
+      {
+        "name": "A Thousand Floating Dreams",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 1,
+        "notes": "Best for personal & team EM/DMG buffing."
+      },
+      {
+        "name": "Kagura's Verity",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 2,
+        "notes": "High personal damage when stacking Skill casts."
+      },
+      {
+        "name": "Sacrificial Fragments",
+        "rarity": "4★",
+        "recommended_refinement": "R3+",
+        "rank": 3,
+        "notes": "Extra Skill for uptime and EM stat line."
+      },
+      {
+        "name": "Wandering Evenstar",
+        "rarity": "4★",
+        "recommended_refinement": "R3+",
+        "rank": 4,
+        "notes": "Team ATK buff; good support option."
+      }
+    ],
+    "artifacts": [
+      {
+        "set": "4pc Deepwood Memories",
+        "notes": "Team-best if no other Deepwood holder; Dendro RES shred."
+      },
+      {
+        "set": "4pc Gilded Dreams",
+        "notes": "Great for personal damage as a driver/enabler."
+      },
+      {
+        "set": "4pc Flower of Paradise Lost",
+        "notes": "If focused on Bloom/Hyperbloom/Burgeon multipliers."
+      }
+    ],
+    "main_stats": {
+      "Sands": "EM (most teams) / ER% (if Burst required every rotation)",
+      "Goblet": "EM (bloom-focused) / Dendro DMG% (crit builds)",
+      "Circlet": "EM (bloom-focused) / CRIT Rate/DMG (crit builds)"
+    },
+    "substats_priority": [
+      "EM",
+      "ER until requirement",
+      "CRIT (if not EM circlet)"
+    ],
+    "er_requirements": [
+      {
+        "condition": "Off-field enabler (Burst every rotation)",
+        "value": "≈120–140% ER"
+      },
+      {
+        "condition": "On-field EM driver with light Burst usage",
+        "value": "≈100–120% ER"
+      }
+    ],
+    "talent_priority": [
+      "Skill > Burst > Normal Attack"
+    ],
+    "team_comps": [
+      {
+        "name": "Hyperbloom Core",
+        "members": [
+          {
+            "name": "Nahida",
+            "role": "Dendro application"
+          },
+          {
+            "name": "Xingqiu/Yelan",
+            "role": "Hydro application"
+          },
+          {
+            "name": "Kuki/Fischl/Raiden (EM build if trigger)",
+            "role": "Electro trigger"
+          },
+          {
+            "name": "Healer/Shield",
+            "role": "Survivability"
+          }
+        ],
+        "notes": "Consistent cores and high reaction damage; Nahida’s A1/A4 buffs help."
+      },
+      {
+        "name": "Quicken/Aggravate",
+        "members": [
+          {
+            "name": "Nahida",
+            "role": "Dendro auras"
+          },
+          {
+            "name": "Fischl/Yae",
+            "role": "Electro turret"
+          },
+          {
+            "name": "Kazuha/Sucrose",
+            "role": "Grouping + VV shred (Electro swirl)"
+          },
+          {
+            "name": "Flex Healer/Buffer",
+            "role": "Comfort or buffs"
+          }
+        ],
+        "notes": "High sustained DPS from Aggravate procs."
+      }
+    ],
+    "pros_cons": {
+      "pros": [
+        "Best-in-class Dendro application",
+        "Huge EM scaling & team buffs",
+        "Flexible in most Dendro teams"
+      ],
+      "cons": [
+        "Wants protection when on-field",
+        "ER check if spamming Burst",
+        "Single-target focus without external grouping"
+      ],
+      "playstyle_notes": [
+        "Tag enemies with Skill, then drive reactions",
+        "If no one holds Deepwood, equip it on Nahida"
+      ]
+    },
+    "materials": {
+      "character_ascension": [
+        "Nagadus Emerald (Dendro)",
+        "Quelled Creeper",
+        "Kalpalata Lotus",
+        "Fungal Spores/Pollen/Cyst Dust"
+      ],
+      "talent_ascension": [
+        "Teachings/Guide/Philosophies of Ingenuity",
+        "Fungal drops",
+        "Puppet Strings (Shouki no Kami)"
+      ]
+    }
+  },
+  {
+    "slug": "yelan",
+    "name": "Yelan",
+    "element": "Hydro",
+    "weapon_type": "Bow",
+    "role(s)": [
+      "Off-field DPS",
+      "Sub-DPS/Enabler",
+      "On-field Quickswap (situational)"
+    ],
+    "lore": {
+      "short": "A mysterious Ministry agent. High single-target off-field Hydro with a powerful ramping DMG buff."
+    },
+    "weapons": [
+      {
+        "name": "Aqua Simulacra",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 1,
+        "notes": "Best personal DPS when ER is met."
+      },
+      {
+        "name": "Elegy for the End",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 2,
+        "notes": "Team EM/ATK buffs + ER for high-ER teams."
+      },
+      {
+        "name": "Favonius Warbow",
+        "rarity": "4★",
+        "recommended_refinement": "R3+",
+        "rank": 3,
+        "notes": "Great F2P; covers ER for Yelan & team."
+      },
+      {
+        "name": "Slingshot / Recurve Bow",
+        "rarity": "3★",
+        "recommended_refinement": "R5",
+        "rank": 4,
+        "notes": "Surprisingly competitive at low ER needs."
+      }
+    ],
+    "artifacts": [
+      {
+        "set": "4pc Emblem of Severed Fate",
+        "notes": "Default best; ER→Burst DMG."
+      },
+      {
+        "set": "4pc Marechaussee Hunter",
+        "notes": "On-field variant in Furina teams."
+      },
+      {
+        "set": "2pc mixes (EoSF/HP%/Hydro DMG%)",
+        "notes": "Early/mixed build; depends on substats."
+      },
+      {
+        "set": "4pc Noblesse/Scroll/Petra/Deepwood",
+        "notes": "Support sets when personal DPS is secondary."
+      }
+    ],
+    "main_stats": {
+      "Sands": "HP% or ER% (meet ER first)",
+      "Goblet": "Hydro DMG% (or HP% if MH/HP scaling build)",
+      "Circlet": "CRIT Rate/DMG (or HP% if support build)"
+    },
+    "substats_priority": [
+      "ER until requirement",
+      "HP% (to ~30k HP)",
+      "CRIT Rate/DMG",
+      "HP%"
+    ],
+    "er_requirements": [
+      {
+        "condition": "Solo Hydro, 1 Skill (Favonius)",
+        "value": "≈215–260% ER"
+      },
+      {
+        "condition": "Solo Hydro, 2 Skills (Favonius)",
+        "value": "≈160–165% ER"
+      },
+      {
+        "condition": "Double Hydro, 1 Skill (Favonius)",
+        "value": "≈185–195% ER"
+      },
+      {
+        "condition": "Double Hydro, 2 Skills (Favonius)",
+        "value": "≈110–140% ER"
+      },
+      {
+        "condition": "With Raiden (reduces ER need)",
+        "value": "Various: often ≈120–150% ER depending on skills"
+      }
+    ],
+    "talent_priority": [
+      "Burst > Skill"
+    ],
+    "team_comps": [
+      {
+        "name": "Hu Tao Double Hydro",
+        "members": [
+          {
+            "name": "Hu Tao",
+            "role": "Main DPS (Vape)"
+          },
+          {
+            "name": "Yelan",
+            "role": "Off-field Hydro + ramping buff"
+          },
+          {
+            "name": "Xingqiu",
+            "role": "Extra Hydro + damage reduction"
+          },
+          {
+            "name": "Zhongli",
+            "role": "Shield"
+          }
+        ],
+        "notes": "Top single-target; extremely consistent Vaporize uptime."
+      },
+      {
+        "name": "Furina Variant",
+        "members": [
+          {
+            "name": "Hu Tao/Yoimiya/Other",
+            "role": "On-field DPS"
+          },
+          {
+            "name": "Yelan",
+            "role": "Off-field Hydro"
+          },
+          {
+            "name": "Furina",
+            "role": "Off-field DMG + buff"
+          },
+          {
+            "name": "Kazuha/Zhongli",
+            "role": "VV shred or shielding"
+          }
+        ],
+        "notes": "Higher team buffs; mind ER if Yelan is solo Hydro."
+      }
+    ],
+    "pros_cons": {
+      "pros": [
+        "High off-field damage",
+        "Big ramping DMG buff (A4)",
+        "Short field-time requirement"
+      ],
+      "cons": [
+        "High ER needs when solo Hydro",
+        "Mainly single-target",
+        "Needs NA pings to trigger Burst"
+      ],
+      "playstyle_notes": [
+        "EQ or Q>N1>E combos to catch particles",
+        "Prioritize ER, then HP and CRIT"
+      ]
+    },
+    "materials": {
+      "character_ascension": [
+        "Varunada Lazurite (Hydro)",
+        "Runic Fang",
+        "Starconch",
+        "Treasure Hoarder Insignias"
+      ],
+      "talent_ascension": [
+        "Teachings/Guide/Philosophies of Prosperity",
+        "Treasure Hoarder Insignias",
+        "Gilded Scale (Azhdaha)"
+      ]
+    }
+  },
+  {
+    "slug": "hu-tao",
+    "name": "Hu Tao",
+    "element": "Pyro",
+    "weapon_type": "Polearm",
+    "role(s)": [
+      "Main DPS (Vaporize)",
+      "On-field Carry"
+    ],
+    "lore": {
+      "short": "The eccentric director of Wangsheng Funeral Parlor. HP-scaling Pyro spearwoman with huge Vape damage."
+    },
+    "weapons": [
+      {
+        "name": "Staff of Homa",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 1,
+        "notes": "Signature; pairs perfectly with low-HP playstyle."
+      },
+      {
+        "name": "Dragon's Bane",
+        "rarity": "4★",
+        "recommended_refinement": "R5",
+        "rank": 2,
+        "notes": "Top 4★ for Vape teams; EM secondary."
+      },
+      {
+        "name": "Deathmatch",
+        "rarity": "4★",
+        "recommended_refinement": "R1+",
+        "rank": 3,
+        "notes": "Consistent stat stick in single-target."
+      },
+      {
+        "name": "Primordial Jade Winged-Spear",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 4,
+        "notes": "Good CRIT option if ER is met."
+      }
+    ],
+    "artifacts": [
+      {
+        "set": "4pc Crimson Witch of Flames",
+        "notes": "Best-in-slot for Vape/Melt; reaction bonuses."
+      },
+      {
+        "set": "4pc Shimenawa's Reminiscence",
+        "notes": "High upfront damage; mind Energy drain."
+      },
+      {
+        "set": "4pc Marechaussee Hunter",
+        "notes": "Very strong in Furina teams (HP fluctuation)."
+      }
+    ],
+    "main_stats": {
+      "Sands": "HP% (common) / EM (team-dependent) / ATK% (fallback)",
+      "Goblet": "Pyro DMG%",
+      "Circlet": "CRIT Rate/DMG"
+    },
+    "substats_priority": [
+      "CRIT Rate/DMG",
+      "HP%",
+      "EM",
+      "ER (low priority)"
+    ],
+    "er_requirements": [
+      {
+        "condition": "Standard Double Hydro teams",
+        "value": "≈100–130% ER"
+      }
+    ],
+    "talent_priority": [
+      "Normal Attack ≥ Skill > Burst"
+    ],
+    "team_comps": [
+      {
+        "name": "Hu Tao Double Hydro",
+        "members": [
+          {
+            "name": "Hu Tao",
+            "role": "On-field DPS"
+          },
+          {
+            "name": "Xingqiu",
+            "role": "Off-field Hydro + interruption resist"
+          },
+          {
+            "name": "Yelan",
+            "role": "Off-field Hydro + ramping buff"
+          },
+          {
+            "name": "Zhongli",
+            "role": "Shield + comfort"
+          }
+        ],
+        "notes": "Premier single-target team; Vape uptime and survivability are excellent."
+      },
+      {
+        "name": "Hu Tao + Furina",
+        "members": [
+          {
+            "name": "Hu Tao",
+            "role": "On-field DPS"
+          },
+          {
+            "name": "Furina",
+            "role": "Off-field DMG + buff"
+          },
+          {
+            "name": "Yelan/Xingqiu",
+            "role": "Hydro application"
+          },
+          {
+            "name": "Kazuha/Zhongli",
+            "role": "VV shred or shielding"
+          }
+        ],
+        "notes": "Enables MH stacks; manage HP carefully."
+      }
+    ],
+    "pros_cons": {
+      "pros": [
+        "Top single-target Vape DPS",
+        "Low ER needs",
+        "Strong F2P polearm options"
+      ],
+      "cons": [
+        "Wants shield or strong interruption resistance",
+        "Tight animation/cancel timings",
+        "HP management required"
+      ],
+      "playstyle_notes": [
+        "Use Skill to enter low-HP stance; N2CJ or N1C strings",
+        "Keep Vape triggers consistent with Hydro timings"
+      ]
+    },
+    "materials": {
+      "character_ascension": [
+        "Agnidus Agate (Pyro)",
+        "Juvenile Jade",
+        "Silk Flower",
+        "Whopperflower Nectars (all tiers)"
+      ],
+      "talent_ascension": [
+        "Teachings/Guide/Philosophies of Diligence",
+        "Whopperflower Nectars (all tiers)",
+        "Shard of a Foul Legacy (Childe)"
+      ]
+    }
+  },
+  {
+    "slug": "ganyu",
+    "name": "Ganyu",
+    "element": "Cryo",
+    "weapon_type": "Bow",
+    "role(s)": [
+      "Main DPS (Charged Shot)",
+      "Freeze",
+      "Melt",
+      "Burst DPS"
+    ],
+    "lore": {
+      "short": "Frost-imbued secretary of the Liyue Qixing; excels at sustained Cryo DPS with her powerful Charged Shots."
+    },
+    "weapons": [
+      {
+        "name": "Amos’ Bow",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 1,
+        "notes": "Best-in-slot for Charged Shot scaling."
+      },
+      {
+        "name": "Polar Star",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 2,
+        "notes": "Strong CRIT + ATK buffs synergize with Ganyu’s burst."
+      },
+      {
+        "name": "Prototype Crescent",
+        "rarity": "4★",
+        "recommended_refinement": "R5",
+        "rank": 3,
+        "notes": "Good F2P Charged Shot DPS option."
+      },
+      {
+        "name": "Mouun’s Moon",
+        "rarity": "4★",
+        "recommended_refinement": "R5",
+        "rank": 4,
+        "notes": "Flexible F2P with good stat line."
+      }
+    ],
+    "artifacts": [
+      {
+        "set": "4pc Blizzard Strayer",
+        "notes": "Freeze-focused; big CRIT bonuses when enemies are frozen."
+      },
+      {
+        "set": "4pc Wanderer’s Troupe",
+        "notes": "Charged Shot damage–heavy; top single-segment DPS alternative."
+      },
+      {
+        "set": "2pc Noblesse + 2pc Blizzard",
+        "notes": "Balanced approach with team burst buff."
+      }
+    ],
+    "main_stats": {
+      "Sands": "ATK%",
+      "Goblet": "Cryo DMG%",
+      "Circlet": "CRIT Rate/DMG"
+    },
+    "substats_priority": [
+      "CRIT Rate/DMG",
+      "ATK%",
+      "ER (until ~150%)"
+    ],
+    "er_requirements": [
+      {
+        "condition": "High-frequency bursts (Freeze teams)",
+        "value": "≈150% ER"
+      },
+      {
+        "condition": "Long rotation Melt teams",
+        "value": "≈120–130% ER"
+      }
+    ],
+    "talent_priority": [
+      "Burst > Charged Shot > Skill"
+    ],
+    "team_comps": [
+      {
+        "name": "Freeze Core",
+        "members": [
+          {
+            "name": "Ganyu",
+            "role": "Main DPS"
+          },
+          {
+            "name": "Mona/Kokomi",
+            "role": "Freeze + Hydro source"
+          },
+          {
+            "name": "Diona/Sayu",
+            "role": "Cryo support / shield/heal"
+          },
+          {
+            "name": "Albedo/Zhongli",
+            "role": "Geo platform or shield + LV shred"
+          }
+        ],
+        "notes": "Consistent Freeze uptime; Ganyu’s Burst benefits from intact Freeze status."
+      },
+      {
+        "name": "Melt Chain",
+        "members": [
+          {
+            "name": "Ganyu",
+            "role": "Main DPS"
+          },
+          {
+            "name": "Xiangling",
+            "role": "Off-field Pyro (Vape or Melt)"
+          },
+          {
+            "name": "Kaeya/Rosaria",
+            "role": "Cryo application"
+          },
+          {
+            "name": "Bennett",
+            "role": "ATK buff + heals"
+          }
+        ],
+        "notes": "High melt DPS; Ganyu’s Burst comes early in rotation for maximum charged shot CT."
+      }
+    ],
+    "pros_cons": {
+      "pros": [
+        "Elite Plume DPS",
+        "Flexible Freeze or Melt playstyles",
+        "High AoE and single-target damage"
+      ],
+      "cons": [
+        "Dependency on field rotations",
+        "High CRIT/ER requirements",
+        "Bow urgencies (aiming)"
+      ],
+      "playstyle_notes": [
+        "Hold Charged Shots while burst is up",
+        "Optimize field time for Melt or Freeze consistency"
+      ]
+    },
+    "materials": {
+      "character_ascension": [
+        "Shivada Jade (Cryo)",
+        "Hoarfrost Core",
+        "Qingxin",
+        "Old Handguards"
+      ],
+      "talent_ascension": [
+        "Teachings/Guide/Philosophies of Gold",
+        "Hoarfrost Cores",
+        "Shivada Jade Sliver/Fragment/Chunk"
+      ]
+    }
+  },
+  {
+    "slug": "kamisato-ayaka",
+    "name": "Kamisato Ayaka",
+    "element": "Cryo",
+    "weapon_type": "Sword",
+    "role(s)": [
+      "Main DPS (Cryo Freeze/Melt)"
+    ],
+    "lore": {
+      "short": "Graceful daughter of the Kamisato clan; brings swift Cryo on-field damage with easy swaps."
+    },
+    "weapons": [
+      {
+        "name": "Aquila Favonia",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 1,
+        "notes": "High ATK strong stat stick; ER often overkill but comfortable."
+      },
+      {
+        "name": "Skyward Blade",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 2,
+        "notes": "Good ER + CRIT for consistent rotations."
+      },
+      {
+        "name": "Amenoma Kageuchi",
+        "rarity": "4★",
+        "recommended_refinement": "R5",
+        "rank": 3,
+        "notes": "Craftable craftable; great ER generation."
+      },
+      {
+        "name": "Prototype Rancour",
+        "rarity": "4★",
+        "recommended_refinement": "R5",
+        "rank": 4,
+        "notes": "ATK% suit, decent fallback stat stick."
+      }
+    ],
+    "artifacts": [
+      {
+        "set": "4pc Blizzard Strayer",
+        "notes": "Freeze-focused; massive CRIT when teammate applies Cryo."
+      },
+      {
+        "set": "4pc Shimenawa’s Reminiscence",
+        "notes": "On-field burst spam; risky on energy but high upfront damage."
+      },
+      {
+        "set": "2pc Noblesse + 2pc Blizzard",
+        "notes": "Better team burst synergy with decent Freeze performance."
+      }
+    ],
+    "main_stats": {
+      "Sands": "ATK%",
+      "Goblet": "Cryo DMG%",
+      "Circlet": "CRIT Rate/DMG"
+    },
+    "substats_priority": [
+      "CRIT Rate/DMG",
+      "ER (until rotation flush)",
+      "ATK%"
+    ],
+    "er_requirements": [
+      {
+        "condition": "Frequent Burst (Freeze comps)",
+        "value": "≈140–160% ER"
+      },
+      {
+        "condition": "Melt comps with less energy need",
+        "value": "≈120–140% ER"
+      }
+    ],
+    "talent_priority": [
+      "Burst > Charged Attack > Skill"
+    ],
+    "team_comps": [
+      {
+        "name": "Freeze Core",
+        "members": [
+          {
+            "name": "Ayaka",
+            "role": "Main DPS"
+          },
+          {
+            "name": "Mona/Kokomi",
+            "role": "Hydro source"
+          },
+          {
+            "name": "Diona/Sayu",
+            "role": "Cryo support / shield/heal"
+          },
+          {
+            "name": "Albedo/Zhongli",
+            "role": "Geo platform or shield + LV shred"
+          }
+        ],
+        "notes": "Quick rotations & easy Freeze loops; minimal field time."
+      },
+      {
+        "name": "Melt Chain",
+        "members": [
+          {
+            "name": "Ayaka",
+            "role": "Main DPS"
+          },
+          {
+            "name": "Xiangling",
+            "role": "Off-field Pyro"
+          },
+          {
+            "name": "Venti/Kazuha",
+            "role": "Grouping"
+          },
+          {
+            "name": "Bennett",
+            "role": "ATK buff + heals"
+          }
+        ],
+        "notes": "Strong melt pressure and easy swap mechanics; utilize Venti’s vacuum to gather enemies pre-Burst."
+      }
+    ],
+    "pros_cons": {
+      "pros": [
+        "Very fluid swap playstyle",
+        "Great Freeze/Melt comfort",
+        "Low skill floor, high ceiling"
+      ],
+      "cons": [
+        "ER hunger if Burst-heavy",
+        "Charged aim dependency",
+        "4★ support often required for consistency"
+      ],
+      "playstyle_notes": [
+        "Basic swap to N2C Q > Team Burst",
+        "Space appropriately to avoid Overload or reaction interference"
+      ]
+    },
+    "materials": {
+      "character_ascension": [
+        "Shivada Jade (Cryo)",
+        "Spectral Husk",
+        "Sakura Bloom",
+        "Old Handguards"
+      ],
+      "talent_ascension": [
+        "Teachings/Guide/Philosophies of Elegance",
+        "Spectral Husk",
+        "Shivada Jade Sliver/Fragment/Chunk"
+      ]
+    }
+  },
+  {
+    "slug": "kaedehara-kazuha",
+    "name": "Kaedehara Kazuha",
+    "element": "Anemo",
+    "weapon_type": "Sword",
+    "role(s)": [
+      "Support",
+      "Anemo Swirl Buffer",
+      "Grouping & VV shred"
+    ],
+    "lore": {
+      "short": "Wandering samurai with wind-bending swirls that amplify teammates’ elemental damage greatly."
+    },
+    "weapons": [
+      {
+        "name": "Freedom-Sworn",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 1,
+        "notes": "Superior team buffing; EM + ATK bonuses."
+      },
+      {
+        "name": "Xiphos’ Moonlight",
+        "rarity": "4★",
+        "recommended_refinement": "R1+",
+        "rank": 2,
+        "notes": "Excellent EM option; strong personal & team application."
+      },
+      {
+        "name": "Favonius Sword",
+        "rarity": "4★",
+        "recommended_refinement": "R1+",
+        "rank": 3,
+        "notes": "Generates particles; lowers team ER pressure."
+      }
+    ],
+    "artifacts": [
+      {
+        "set": "4pc Emblem of Severed Fate",
+        "notes": "Boosts Burst DMG and ER synergy."
+      },
+      {
+        "set": "2pc VV + 2pc ESF",
+        "notes": "Elemental RES shred + Burst enhancements."
+      },
+      {
+        "set": "4pc Viridescent Venerer",
+        "notes": "Strong Anemo shred for element combos; less Burst focused but flexible."
+      }
+    ],
+    "main_stats": {
+      "Sands": "ER% / EM (balanced builds)",
+      "Goblet": "EM",
+      "Circlet": "EM / Crit Rate"
+    },
+    "substats_priority": [
+      "EM",
+      "ER",
+      "Crit Rate/DMG"
+    ],
+    "er_requirements": [
+      {
+        "condition": "Solo Anemo rotation (1 Tap+1 Hold Skill)",
+        "value": "≈190–200% ER (no Favonius) / ≈160–170% (with Favonius)"
+      },
+      {
+        "condition": "Double Anemo rotation",
+        "value": "≈105–110% ER (no Fav) / ≈100–105% (with Fav)"
+      }
+    ],
+    "talent_priority": [
+      "Burst > Skill > Normal Attack"
+    ],
+    "team_comps": [
+      {
+        "name": "Venti Freeze/Swirl",
+        "members": [
+          {
+            "name": "Kazuha",
+            "role": "Support"
+          },
+          {
+            "name": "Venti",
+            "role": "Anemo grouping"
+          },
+          {
+            "name": "Mona/Kokomi",
+            "role": "Freeze support"
+          },
+          {
+            "name": "Freeze DPS (e.g., Ganyu/Ayaka)",
+            "role": "Main DPS"
+          }
+        ],
+        "notes": "Stacked Swirl + Cryo = big damage; Ariya grouping ensures Burst covers all enemies."
+      },
+      {
+        "name": "Hu Tao Quicken/VV Vaporize",
+        "members": [
+          {
+            "name": "Kazuha",
+            "role": "Support"
+          },
+          {
+            "name": "Hu Tao",
+            "role": "Main DPS"
+          },
+          {
+            "name": "Fischl/Faruzan",
+            "role": "Electro application / Anemo buff"
+          },
+          {
+            "name": "Bennett",
+            "role": "ATK buff + heal"
+          }
+        ],
+        "notes": "A4 EM buff applies to Hu Tao; Quicken/VV amplify Vaporize damage."
+      }
+    ],
+    "pros_cons": {
+      "pros": [
+        "Arguably best wind buffer; multi-element boosting",
+        "ER deps flexible with Fav",
+        "Great for grouping many comps"
+      ],
+      "cons": [
+        "Needs ER tuning if no Favonius",
+        "EM focus may waste substats in non-reaction teams"
+      ],
+      "playstyle_notes": [
+        "Tag enemies with Skill then Q for maximum buffs",
+        "Use rotation with 1 Tap + 1 Hold for ER optimization"
+      ]
+    },
+    "materials": {
+      "character_ascension": [
+        "Vayuda Turquoise (Anemo)",
+        "Old Handguard",
+        "Windwheel Aster",
+        "Philosophies of Prosperity"
+      ],
+      "talent_ascension": [
+        "Teachings/Guide/Philosophies of Freedom",
+        "Old Handguard",
+        "Crown of Insight (if going for leveling)"
+      ]
+    }
+  },
+  {
+    "slug": "zhongli",
+    "name": "Zhongli",
+    "element": "Geo",
+    "weapon_type": "Polearm",
+    "role(s)": [
+      "Shield Support",
+      "Burst Support",
+      "Physical/Geo DPS (microwave)"
+    ],
+    "lore": {
+      "short": "The Geo Archon, wielding powerful shields and versatile enough to both protect and carry with Geo or Physical damage."
+    },
+    "weapons": [
+      {
+        "name": "Vortex Vanquisher",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 1,
+        "notes": "Shield strength + ATK for teammates."
+      },
+      {
+        "name": "Staff of Homa",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 2,
+        "notes": "Strong if running Zhongli as DPS hybrid."
+      },
+      {
+        "name": "Crescent Pike",
+        "rarity": "4★",
+        "recommended_refinement": "R5",
+        "rank": 3,
+        "notes": "F2P alternative for Physical DPS."
+      },
+      {
+        "name": "Favonius Lance",
+        "rarity": "4★",
+        "recommended_refinement": "R5",
+        "rank": 4,
+        "notes": "Particle generation; lowers team ER hunger."
+      }
+    ],
+    "artifacts": [
+      {
+        "set": "2pc Tenacity of Millelith + 2pc Noblesse",
+        "notes": "Shield and Burst support combo; AoE buffs."
+      },
+      {
+        "set": "4pc Tenacity of Millelith",
+        "notes": "Even stronger shield uptime and ATK support when paired with elemental shielder comps."
+      },
+      {
+        "set": "4pc Retracing Bolide",
+        "notes": "For Geo DPS builds; boosts shielded damage."
+      }
+    ],
+    "main_stats": {
+      "Sands": "ATK% / Energy Recharge (team dependent)",
+      "Goblet": "Geo DMG% (DPS) / HP% (build for shield)",
+      "Circlet": "CRIT Rate/DMG (DPS) / HP% (shield)"
+    },
+    "substats_priority": [
+      "HP% (for stronger shields)",
+      "Energy Recharge (if Burst support)",
+      "ATK%/CRIT (DPS)"
+    ],
+    "er_requirements": [
+      {
+        "condition": "Shield/Burst support",
+        "value": "≈130–150% ER"
+      },
+      {
+        "condition": "Geo DPS build",
+        "value": "≈100–120% ER (if R5 weapons used)"
+      }
+    ],
+    "talent_priority": [
+      "Skill (shield) > Burst > Normal Attack / Plunge"
+    ],
+    "team_comps": [
+      {
+        "name": "Shield Bot + Burst Support",
+        "members": [
+          {
+            "name": "Zhongli",
+            "role": "Shield + Burst Debuff"
+          },
+          {
+            "name": "Hu Tao/Wanderer",
+            "role": "Main DPS"
+          },
+          {
+            "name": "Faruzan/Freedom/Anemo support",
+            "role": "Buff / grouping"
+          },
+          {
+            "name": "Bennett/Flex Healer",
+            "role": "ATK buff / heal"
+          }
+        ],
+        "notes": "Zhongli’s shield offers comfort; his Burst reduces enemy Geo RES by 20% and petrifies, giving DPS windows."
+      },
+      {
+        "name": "Geo Microwave DPS",
+        "members": [
+          {
+            "name": "Zhongli",
+            "role": "On-field Geo DPS"
+          },
+          {
+            "name": "Albedo",
+            "role": "LM platform Geo off-field"
+          },
+          {
+            "name": "Bennett/Freedom",
+            "role": "ATK buff"
+          },
+          {
+            "name": "Faruzan/Kazuha",
+            "role": "Crowd control or energy support"
+          }
+        ],
+        "notes": "Stacked Geo resonances; Zhongli’s normal attacks amplified within elevated shield."
+      }
+    ],
+    "pros_cons": {
+      "pros": [
+        "Strongest shields in game",
+        "Geo RES shred via Burst",
+        "Highly versatile across roles"
+      ],
+      "cons": [
+        "Shares Shielder slot; not DPS-first without hybrid gear",
+        "Shield timing matters for key rotations"
+      ],
+      "playstyle_notes": [
+        "Place pillar early to preserve uptime",
+        "Burst to interrupt enemy attacks; swap to DPS quickly"
+      ]
+    },
+    "materials": {
+      "character_ascension": [
+        "Prithiva Topaz (Geo)",
+        "Cor Lapis",
+        "Glaze Lily",
+        "Old Handguards"
+      ],
+      "talent_ascension": [
+        "Teachings/Guide/Philosophies of Gold",
+        "Old Handguards",
+        "Crown of Insight (if investing heavily)"
+      ]
+    }
+  },
+  {
+    "slug": "diluc",
+    "name": "Diluc",
+    "element": "Pyro",
+    "weapon_type": "Claymore",
+    "role(s)": [
+      "Main DPS",
+      "Vaporize/Melt Driver"
+    ],
+    "lore": {
+      "short": "The tycoon of a winery empire. Smooth Pyro infusion after Burst for classic Vape/Melt carries."
+    },
+    "weapons": [
+      {
+        "name": "Wolf's Gravestone",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 1,
+        "notes": "High ATK% team buff and great personal DPS."
+      },
+      {
+        "name": "Serpent Spine",
+        "rarity": "4★",
+        "recommended_refinement": "R5",
+        "rank": 2,
+        "notes": "Top BP option; consistent CRIT and DMG bonus."
+      },
+      {
+        "name": "Beacon of the Reed Sea",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 3,
+        "notes": "Strong stat stick; pairs well with Bennett support."
+      }
+    ],
+    "artifacts": [
+      {
+        "set": "4pc Crimson Witch of Flames",
+        "notes": "BiS for Vape/Melt rotations."
+      },
+      {
+        "set": "2pc Crimson Witch + 2pc ATK% (Glad/Shime)",
+        "notes": "Solid mix while farming."
+      },
+      {
+        "set": "4pc Marechaussee Hunter",
+        "notes": "Alt in Furina teams for CRIT Rate stacking."
+      }
+    ],
+    "main_stats": {
+      "Sands": "ATK% (or EM for pure Vape focus)",
+      "Goblet": "Pyro DMG%",
+      "Circlet": "CRIT Rate/DMG"
+    },
+    "substats_priority": [
+      "CRIT Rate/DMG",
+      "ATK%",
+      "EM",
+      "ER"
+    ],
+    "er_requirements": [
+      {
+        "condition": "General teams (Burst every rotation)",
+        "value": "≈110–140% ER"
+      }
+    ],
+    "talent_priority": [
+      "Normal Attack > Skill > Burst"
+    ],
+    "team_comps": [
+      {
+        "name": "Diluc Vape",
+        "members": [
+          {
+            "name": "Diluc",
+            "role": "Main DPS"
+          },
+          {
+            "name": "Xingqiu/Yelan",
+            "role": "Off-field Hydro"
+          },
+          {
+            "name": "Bennett",
+            "role": "ATK buff + heal"
+          },
+          {
+            "name": "Kazuha/Sucrose",
+            "role": "VV shred + grouping"
+          }
+        ],
+        "notes": "Classic Vape chain with strong buffs."
+      },
+      {
+        "name": "Reverse Melt",
+        "members": [
+          {
+            "name": "Diluc",
+            "role": "On-field DPS"
+          },
+          {
+            "name": "Rosaria/Kaeya",
+            "role": "Cryo application"
+          },
+          {
+            "name": "Bennett",
+            "role": "ATK buff + heals"
+          },
+          {
+            "name": "Kazuha",
+            "role": "RES shred + grouping"
+          }
+        ],
+        "notes": "High Melt frequency via off-field Cryo."
+      }
+    ],
+    "pros_cons": {
+      "pros": [
+        "Comfortable melee Pyro infusion",
+        "Great with common 4★ supports",
+        "Flexible team shells"
+      ],
+      "cons": [
+        "Needs Hydro/Cryo partners to shine",
+        "Mediocre personal Burst damage"
+      ],
+      "playstyle_notes": [
+        "E (tap/hold) → Q → infused NAs; snapshot Bennett/Kazuha buffs before Q"
+      ]
+    },
+    "materials": {
+      "character_ascension": [
+        "Agnidus Agate",
+        "Everflame Seed",
+        "Small Lamp Grass",
+        "Recruit’s Insignia/Sergeant’s/ Lieutenant’s"
+      ],
+      "talent_ascension": [
+        "Teachings/Guide/Philosophies of Resistance",
+        "Recruit’s Insignias",
+        "Dvalin’s Plume"
+      ]
+    }
+  },
+  {
+    "slug": "yoimiya",
+    "name": "Yoimiya",
+    "element": "Pyro",
+    "weapon_type": "Bow",
+    "role(s)": [
+      "Main DPS (Single-target NA)"
+    ],
+    "lore": {
+      "short": "Naganohara fireworks master. Incredible single-target Pyro via infused Normal Attacks."
+    },
+    "weapons": [
+      {
+        "name": "Thundering Pulse",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 1,
+        "notes": "Signature; top NA scaling."
+      },
+      {
+        "name": "Aqua Simulacra",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 2,
+        "notes": "Huge CRIT/DMG stat stick."
+      },
+      {
+        "name": "Rust",
+        "rarity": "4★",
+        "recommended_refinement": "R5",
+        "rank": 3,
+        "notes": "Best 4★ for NA-focused play."
+      }
+    ],
+    "artifacts": [
+      {
+        "set": "4pc Shimenawa’s Reminiscence",
+        "notes": "BiS for frontloaded NA strings; manage Energy."
+      },
+      {
+        "set": "4pc Crimson Witch of Flames",
+        "notes": "Great all-round Vape/Melt."
+      },
+      {
+        "set": "4pc Marechaussee Hunter",
+        "notes": "Excels with Furina HP fluctuations."
+      }
+    ],
+    "main_stats": {
+      "Sands": "ATK% (or EM if heavy Vape)",
+      "Goblet": "Pyro DMG%",
+      "Circlet": "CRIT Rate/DMG"
+    },
+    "substats_priority": [
+      "CRIT Rate/DMG",
+      "ATK%",
+      "EM",
+      "ER"
+    ],
+    "er_requirements": [
+      {
+        "condition": "General use",
+        "value": "≈100–140% ER (Burst optional)"
+      }
+    ],
+    "talent_priority": [
+      "Normal Attack > Skill > Burst"
+    ],
+    "team_comps": [
+      {
+        "name": "Yoimiya Vape",
+        "members": [
+          {
+            "name": "Yoimiya",
+            "role": "On-field DPS"
+          },
+          {
+            "name": "Yelan/Xingqiu",
+            "role": "Off-field Hydro"
+          },
+          {
+            "name": "Bennett",
+            "role": "ATK buff + heal"
+          },
+          {
+            "name": "Zhongli",
+            "role": "Shield"
+          }
+        ],
+        "notes": "Max single-target consistency; shields help maintain strings."
+      },
+      {
+        "name": "Overvape",
+        "members": [
+          {
+            "name": "Yoimiya",
+            "role": "DPS"
+          },
+          {
+            "name": "Yelan",
+            "role": "Hydro + ramp buff"
+          },
+          {
+            "name": "Fischl/Beidou",
+            "role": "Electro turret"
+          },
+          {
+            "name": "Bennett",
+            "role": "ATK/Heal"
+          }
+        ],
+        "notes": "Vape + Overload hybrid; strong single-target with some AoE."
+      }
+    ],
+    "pros_cons": {
+      "pros": [
+        "Top-tier single-target",
+        "Simple gameplay loop",
+        "Great 4★ weapon options"
+      ],
+      "cons": [
+        "Limited AoE",
+        "Energy negatives with Shime",
+        "Wants interruption resistance"
+      ],
+      "playstyle_notes": [
+        "Skill → NA strings; weave supports’ Bursts between Skill windows"
+      ]
+    },
+    "materials": {
+      "character_ascension": [
+        "Agnidus Agate",
+        "Pyro Hypostasis drop (Smoldering Pearl)",
+        "Naku Weed",
+        "Transience books mob: Specters? (alt drops)"
+      ],
+      "talent_ascension": [
+        "Teachings/Guide/Philosophies of Transience",
+        "Treasure Hoarder Insignias",
+        "Dragon Lord’s Crown (Azhdaha)"
+      ]
+    }
+  },
+  {
+    "slug": "kamisato-ayato",
+    "name": "Kamisato Ayato",
+    "element": "Hydro",
+    "weapon_type": "Sword",
+    "role(s)": [
+      "On-field DPS (NA hydro slashes)",
+      "Off-field Burst support"
+    ],
+    "lore": {
+      "short": "The Yashiro Commissioner. Quick Hydro slashes and a team buffing Burst."
+    },
+    "weapons": [
+      {
+        "name": "Haran Geppaku Futsu",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 1,
+        "notes": "Signature; NA dmg + crit stats."
+      },
+      {
+        "name": "Primordial Jade Cutter",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 2,
+        "notes": "Strong CRIT/HP synergy."
+      },
+      {
+        "name": "The Black Sword / Amenoma Kageuchi",
+        "rarity": "4★",
+        "recommended_refinement": "R1+/R5",
+        "rank": 3,
+        "notes": "BP stat stick / craftable ER comfort."
+      }
+    ],
+    "artifacts": [
+      {
+        "set": "4pc Heart of Depth",
+        "notes": "Default best for NA-focused DPS."
+      },
+      {
+        "set": "4pc Marechaussee Hunter",
+        "notes": "Excellent with Furina (HP fluctuation CRIT)."
+      },
+      {
+        "set": "2pc HoD + 2pc ATK%/Hydro DMG%",
+        "notes": "Mixed until substats align."
+      }
+    ],
+    "main_stats": {
+      "Sands": "ATK%",
+      "Goblet": "Hydro DMG%",
+      "Circlet": "CRIT Rate/DMG"
+    },
+    "substats_priority": [
+      "CRIT Rate/DMG",
+      "ATK%",
+      "ER until requirement"
+    ],
+    "er_requirements": [
+      {
+        "condition": "Solo Hydro without battery",
+        "value": "≈130–150% ER"
+      },
+      {
+        "condition": "With Hydro partners or Fav",
+        "value": "≈110–130% ER"
+      }
+    ],
+    "talent_priority": [
+      "Skill > Burst > Normal Attack"
+    ],
+    "team_comps": [
+      {
+        "name": "Ayato Vape",
+        "members": [
+          {
+            "name": "Ayato",
+            "role": "Driver"
+          },
+          {
+            "name": "Xiangling",
+            "role": "Off-field Pyro"
+          },
+          {
+            "name": "Bennett",
+            "role": "ATK/Heal"
+          },
+          {
+            "name": "Kazuha",
+            "role": "VV shred + buff"
+          }
+        ],
+        "notes": "Strong AoE & consistent Vapes."
+      },
+      {
+        "name": "Freeze Ayato",
+        "members": [
+          {
+            "name": "Ayato",
+            "role": "On-field Hydro"
+          },
+          {
+            "name": "Ganyu/Ayaka",
+            "role": "Cryo DPS"
+          },
+          {
+            "name": "Kazuha/Venti",
+            "role": "Grouping + shred"
+          },
+          {
+            "name": "Diona/Kokomi",
+            "role": "Shield or heal"
+          }
+        ],
+        "notes": "Perma-freeze control + damage."
+      }
+    ],
+    "pros_cons": {
+      "pros": [
+        "Fast on-field Hydro application",
+        "Low field-time rotations",
+        "Flexible weapon options"
+      ],
+      "cons": [
+        "ER checks in solo Hydro",
+        "Mostly single-target strings outside Burst"
+      ],
+      "playstyle_notes": [
+        "Cast Burst for field buff → Skill slashes; snapshot buffs before Skill"
+      ]
+    },
+    "materials": {
+      "character_ascension": [
+        "Varunada Lazurite",
+        "Dew of Repudiation",
+        "Sakura Bloom",
+        "Old Handguards"
+      ],
+      "talent_ascension": [
+        "Teachings/Guide/Philosophies of Elegance",
+        "Handguards",
+        "Mudra of the Malefic General (Raiden)"
+      ]
+    }
+  },
+  {
+    "slug": "tartaglia",
+    "name": "Tartaglia",
+    "element": "Hydro",
+    "weapon_type": "Bow",
+    "role(s)": [
+      "On-field DPS (Melee Stance)",
+      "Burst Support"
+    ],
+    "lore": {
+      "short": "The Eleventh Fatui Harbinger, Childe. Melee stance Hydro DPS with powerful nukes."
+    },
+    "weapons": [
+      {
+        "name": "Polar Star",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 1,
+        "notes": "Top damage; easy passive stacks."
+      },
+      {
+        "name": "The First Great Magic",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 2,
+        "notes": "High personal NA/CA buff."
+      },
+      {
+        "name": "Rust / Mouun’s Moon",
+        "rarity": "4★",
+        "recommended_refinement": "R5",
+        "rank": 3,
+        "notes": "Rust for NA focus; Mouun’s for Burst focus."
+      }
+    ],
+    "artifacts": [
+      {
+        "set": "4pc Heart of Depth",
+        "notes": "Standard best for stance DPS."
+      },
+      {
+        "set": "2pc HoD + 2pc ATK%/Hydro DMG%",
+        "notes": "Good mixed option."
+      },
+      {
+        "set": "4pc Marechaussee Hunter",
+        "notes": "HP fluctuation teams (Furina) alternative."
+      }
+    ],
+    "main_stats": {
+      "Sands": "ATK%",
+      "Goblet": "Hydro DMG%",
+      "Circlet": "CRIT Rate/DMG"
+    },
+    "substats_priority": [
+      "CRIT Rate/DMG",
+      "ATK%",
+      "ER until requirement"
+    ],
+    "er_requirements": [
+      {
+        "condition": "National/XL Bennett shells",
+        "value": "≈110–130% ER"
+      },
+      {
+        "condition": "Solo Hydro or long rotations",
+        "value": "≈130–150% ER"
+      }
+    ],
+    "talent_priority": [
+      "Skill > Burst > Normal Attack"
+    ],
+    "team_comps": [
+      {
+        "name": "Childe International",
+        "members": [
+          {
+            "name": "Tartaglia",
+            "role": "On-field Hydro"
+          },
+          {
+            "name": "Xiangling",
+            "role": "Off-field Pyro"
+          },
+          {
+            "name": "Bennett",
+            "role": "ATK/Heal"
+          },
+          {
+            "name": "Kazuha",
+            "role": "VV shred + grouping"
+          }
+        ],
+        "notes": "Famous high-DPS rotation centered on Vape."
+      },
+      {
+        "name": "Mono Hydro (Furina)",
+        "members": [
+          {
+            "name": "Tartaglia",
+            "role": "On-field DPS"
+          },
+          {
+            "name": "Furina",
+            "role": "Off-field dmg + buffs"
+          },
+          {
+            "name": "Yelan",
+            "role": "Off-field Hydro + ramp buff"
+          },
+          {
+            "name": "Kazuha",
+            "role": "VV shred"
+          }
+        ],
+        "notes": "Stack Hydro buffs for sustained DPS."
+      }
+    ],
+    "pros_cons": {
+      "pros": [
+        "Strong AoE with Riptide",
+        "Powerful nuke Burst",
+        "Flexible team shells"
+      ],
+      "cons": [
+        "Stance cooldown management",
+        "ER checks in Burst-focused teams"
+      ],
+      "playstyle_notes": [
+        "Open Burst→E for Riptide/AoE; manage E cooldown to avoid downtime"
+      ]
+    },
+    "materials": {
+      "character_ascension": [
+        "Varunada Lazurite",
+        "Cleansing Heart (Oceanid)",
+        "Starconch",
+        "Fatui Insignias"
+      ],
+      "talent_ascension": [
+        "Teachings/Guide/Philosophies of Freedom",
+        "Fatui Insignias",
+        "Shard of a Foul Legacy (Childe)"
+      ]
+    }
+  },
+  {
+    "slug": "sangonomiya-kokomi",
+    "name": "Sangonomiya Kokomi",
+    "element": "Hydro",
+    "weapon_type": "Catalyst",
+    "role(s)": [
+      "Healer",
+      "Off-field Hydro applier",
+      "Driver (Bloom/EC)"
+    ],
+    "lore": {
+      "short": "Divine Priestess of Watatsumi. Premier healer with consistent Hydro application."
+    },
+    "weapons": [
+      {
+        "name": "Everlasting Moonglow",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 1,
+        "notes": "Best for personal dmg + healing uptime."
+      },
+      {
+        "name": "Prototype Amber",
+        "rarity": "4★",
+        "recommended_refinement": "R5",
+        "rank": 2,
+        "notes": "Great craftable; battery & healing."
+      },
+      {
+        "name": "Thrilling Tales of Dragon Slayers",
+        "rarity": "3★",
+        "recommended_refinement": "R5",
+        "rank": 3,
+        "notes": "Top team ATK buffer when personal DPS irrelevant."
+      }
+    ],
+    "artifacts": [
+      {
+        "set": "4pc Ocean-Hued Clam",
+        "notes": "Best for healing → clam damage."
+      },
+      {
+        "set": "4pc Tenacity of Millelith",
+        "notes": "Team ATK buff + strong uptime."
+      },
+      {
+        "set": "2pc HP% + 2pc HP%/Hydro DMG%",
+        "notes": "Mixed HP focus while farming."
+      }
+    ],
+    "main_stats": {
+      "Sands": "HP% / ER% (if Burst tight)",
+      "Goblet": "Hydro DMG% or HP%",
+      "Circlet": "Healing Bonus / HP%"
+    },
+    "substats_priority": [
+      "HP%",
+      "ER",
+      "EM (Bloom teams)"
+    ],
+    "er_requirements": [
+      {
+        "condition": "Solo Hydro healer/off-field",
+        "value": "≈180–220% ER"
+      },
+      {
+        "condition": "With extra particles / Fav",
+        "value": "≈150–180% ER"
+      }
+    ],
+    "talent_priority": [
+      "Skill > Burst > Normal Attack"
+    ],
+    "team_comps": [
+      {
+        "name": "Nilou Bloom",
+        "members": [
+          {
+            "name": "Nilou",
+            "role": "Bountiful Core enabler"
+          },
+          {
+            "name": "Kokomi",
+            "role": "Healer + Hydro aura"
+          },
+          {
+            "name": "Nahida",
+            "role": "Dendro application"
+          },
+          {
+            "name": "Baizhu/Yaoyao",
+            "role": "Additional Dendro + heal/shield"
+          }
+        ],
+        "notes": "Core Nilou comp; Kokomi enables safe HP management."
+      },
+      {
+        "name": "Freeze Support",
+        "members": [
+          {
+            "name": "Ayaka/Ganyu",
+            "role": "Main DPS"
+          },
+          {
+            "name": "Kokomi",
+            "role": "Hydro aura + heals"
+          },
+          {
+            "name": "Kazuha/Venti",
+            "role": "VV shred + grouping"
+          },
+          {
+            "name": "Shenhe/Diona",
+            "role": "Cryo buffer or shield"
+          }
+        ],
+        "notes": "Stable Freeze uptime and team sustain."
+      }
+    ],
+    "pros_cons": {
+      "pros": [
+        "Best-in-class team sustain",
+        "Consistent Hydro application",
+        "Great F2P/craftable options"
+      ],
+      "cons": [
+        "Low personal CRIT scaling",
+        "High ER in solo Hydro setups"
+      ],
+      "playstyle_notes": [
+        "Place Skill early to tick; Burst to refresh jellyfish and drive reactions"
+      ]
+    },
+    "materials": {
+      "character_ascension": [
+        "Varunada Lazurite",
+        "Dew of Repudiation",
+        "Sango Pearl",
+        "Specter drops"
+      ],
+      "talent_ascension": [
+        "Teachings/Guide/Philosophies of Transience",
+        "Specter drops",
+        "Hellfire Butterfly (La Signora)"
+      ]
+    }
+  },
+  {
+    "slug": "nilou",
+    "name": "Nilou",
+    "element": "Hydro",
+    "weapon_type": "Sword",
+    "role(s)": [
+      "Bloom Enabler",
+      "On-field Driver (Hydro/Dendro only teams)"
+    ],
+    "lore": {
+      "short": "Zubayr Theater’s star. Converts Blooms into powerful Bountiful Cores when the party is Hydro/Dendro only."
+    },
+    "weapons": [
+      {
+        "name": "Key of Khaj-Nisut",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 1,
+        "notes": "HP% + team EM share."
+      },
+      {
+        "name": "Primordial Jade Cutter",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 2,
+        "notes": "Stat stick when HP% options unavailable."
+      },
+      {
+        "name": "Favonius Sword",
+        "rarity": "4★",
+        "recommended_refinement": "R3+",
+        "rank": 3,
+        "notes": "Team battery utility."
+      }
+    ],
+    "artifacts": [
+      {
+        "set": "2pc HP% + 2pc HP%",
+        "notes": "Default for HP scaling."
+      },
+      {
+        "set": "4pc Flower of Paradise Lost",
+        "notes": "If Nilou triggers cores herself."
+      },
+      {
+        "set": "2pc HP% + 2pc EM",
+        "notes": "Mixed if chasing substats."
+      }
+    ],
+    "main_stats": {
+      "Sands": "HP% (or EM if trigger)",
+      "Goblet": "HP%",
+      "Circlet": "HP% (or CRIT if hybrid)"
+    },
+    "substats_priority": [
+      "HP%",
+      "ER (until ~120%)",
+      "EM (if triggering)"
+    ],
+    "er_requirements": [
+      {
+        "condition": "Standard Nilou Bloom teams",
+        "value": "≈100–130% ER"
+      }
+    ],
+    "talent_priority": [
+      "Skill > Burst > Normal Attack"
+    ],
+    "team_comps": [
+      {
+        "name": "Nilou Bloom Core",
+        "members": [
+          {
+            "name": "Nilou",
+            "role": "Bountiful Core passive"
+          },
+          {
+            "name": "Kokomi",
+            "role": "Healer + Hydro aura"
+          },
+          {
+            "name": "Nahida",
+            "role": "Dendro application"
+          },
+          {
+            "name": "Baizhu/Yaoyao",
+            "role": "Dendro sustain"
+          }
+        ],
+        "notes": "Only Hydro & Dendro characters allowed to enable Bountiful Cores."
+      },
+      {
+        "name": "Triple Hydro Bloom",
+        "members": [
+          {
+            "name": "Nilou",
+            "role": "Driver"
+          },
+          {
+            "name": "Kokomi",
+            "role": "Heals + Hydro aura"
+          },
+          {
+            "name": "Xingqiu/Yelan",
+            "role": "Extra Hydro"
+          },
+          {
+            "name": "Nahida",
+            "role": "Dendro core"
+          }
+        ],
+        "notes": "Very safe Bloom spam; careful with EM distribution."
+      }
+    ],
+    "pros_cons": {
+      "pros": [
+        "Huge Bloom damage ceiling",
+        "Simple rotation",
+        "Low ER needs"
+      ],
+      "cons": [
+        "Strict team restrictions (Hydro/Dendro only)",
+        "Needs healer for HP drain"
+      ],
+      "playstyle_notes": [
+        "Keep Hydro aura strong; maintain Dendro uptime for nonstop cores"
+      ]
+    },
+    "materials": {
+      "character_ascension": [
+        "Varunada Lazurite",
+        "Perpetual Caliber (Aeonblight Drake)",
+        "Padisarah",
+        "Fungus drops"
+      ],
+      "talent_ascension": [
+        "Teachings/Guide/Philosophies of Praxis",
+        "Fungus drops",
+        "Tears of the Calamitous God (Raiden)"
+      ]
+    }
+  },
+  {
+    "slug": "yae-miko",
+    "name": "Yae Miko",
+    "element": "Electro",
+    "weapon_type": "Catalyst",
+    "role(s)": [
+      "Off-field DPS (Turrets)",
+      "Aggravate Sub-DPS"
+    ],
+    "lore": {
+      "short": "Guuji of the Grand Narukami Shrine. Places totems that deal steady Electro and burst into big nukes."
+    },
+    "weapons": [
+      {
+        "name": "Kagura’s Verity",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 1,
+        "notes": "Signature; best personal DPS."
+      },
+      {
+        "name": "The Widsith",
+        "rarity": "4★",
+        "recommended_refinement": "R5",
+        "rank": 2,
+        "notes": "Huge burst windows; great F2P."
+      },
+      {
+        "name": "Solar Pearl / Skyward Atlas",
+        "rarity": "4★/5★",
+        "recommended_refinement": "R1+",
+        "rank": 3,
+        "notes": "Consistent stat sticks."
+      }
+    ],
+    "artifacts": [
+      {
+        "set": "4pc Golden Troupe",
+        "notes": "Best for off-field Skill damage."
+      },
+      {
+        "set": "4pc Gilded Dreams",
+        "notes": "Aggravate-focused EM builds."
+      },
+      {
+        "set": "2pc Thundering Fury + 2pc ATK%/EM",
+        "notes": "Mixed alternative."
+      }
+    ],
+    "main_stats": {
+      "Sands": "ATK% (or EM for Aggravate)",
+      "Goblet": "Electro DMG%",
+      "Circlet": "CRIT Rate/DMG"
+    },
+    "substats_priority": [
+      "CRIT Rate/DMG",
+      "ATK%",
+      "EM",
+      "ER until ~120–140% if bursting often"
+    ],
+    "er_requirements": [
+      {
+        "condition": "With batteries (Raiden/Fischl)",
+        "value": "≈110–130% ER"
+      },
+      {
+        "condition": "Without extra particles",
+        "value": "≈130–150% ER"
+      }
+    ],
+    "talent_priority": [
+      "Skill > Burst > Normal Attack"
+    ],
+    "team_comps": [
+      {
+        "name": "Aggravate",
+        "members": [
+          {
+            "name": "Yae",
+            "role": "Off-field Electro"
+          },
+          {
+            "name": "Nahida",
+            "role": "Dendro auras"
+          },
+          {
+            "name": "Fischl/Kuki",
+            "role": "Extra Electro / healing"
+          },
+          {
+            "name": "Kazuha/Sucrose/Zhongli",
+            "role": "Shred, grouping or comfort"
+          }
+        ],
+        "notes": "Very high sustained DPS from Aggravate procs."
+      },
+      {
+        "name": "Yae + Raiden",
+        "members": [
+          {
+            "name": "Raiden",
+            "role": "On-field burst DPS + battery"
+          },
+          {
+            "name": "Yae",
+            "role": "Off-field totems"
+          },
+          {
+            "name": "Bennett/Sara",
+            "role": "ATK/Electro buffs"
+          },
+          {
+            "name": "Kazuha",
+            "role": "VV shred"
+          }
+        ],
+        "notes": "Raiden solves ER and frontloads damage."
+      }
+    ],
+    "pros_cons": {
+      "pros": [
+        "Excellent turret uptime",
+        "Strong with Golden Troupe",
+        "Great in Dendro meta"
+      ],
+      "cons": [
+        "Totem placement/AI matters",
+        "ER checks for Burst-centric play"
+      ],
+      "playstyle_notes": [
+        "Place 3 totems → Burst to detonate → re-place totems; snapshot buffs"
+      ]
+    },
+    "materials": {
+      "character_ascension": [
+        "Vajrada Amethyst",
+        "Dragonheir’s False Fin",
+        "Sea Ganoderma",
+        "Nobushi handguards"
+      ],
+      "talent_ascension": [
+        "Teachings/Guide/Philosophies of Light",
+        "Handguards",
+        "The Meaning of Aeons (Raiden)"
+      ]
+    }
+  },
+  {
+    "slug": "cyno",
+    "name": "Cyno",
+    "element": "Electro",
+    "weapon_type": "Polearm",
+    "role(s)": [
+      "On-field Aggravate DPS"
+    ],
+    "lore": {
+      "short": "General Mahamatra. Long-Burst Electro carry who thrives in Quicken teams."
+    },
+    "weapons": [
+      {
+        "name": "Staff of the Scarlet Sands",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 1,
+        "notes": "Signature; EM→CRIT scaling."
+      },
+      {
+        "name": "Staff of Homa",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 2,
+        "notes": "Top stat stick."
+      },
+      {
+        "name": "Deathmatch",
+        "rarity": "4★",
+        "recommended_refinement": "R1+",
+        "rank": 3,
+        "notes": "Reliable CRIT/ATK in single-target."
+      }
+    ],
+    "artifacts": [
+      {
+        "set": "4pc Thundering Fury",
+        "notes": "Best for Quicken uptime & Skill CD reduction."
+      },
+      {
+        "set": "4pc Gilded Dreams",
+        "notes": "High EM and personal DPS."
+      },
+      {
+        "set": "2pc EM + 2pc Electro DMG/ATK%",
+        "notes": "Mixed alternative."
+      }
+    ],
+    "main_stats": {
+      "Sands": "ATK% (or EM for heavy Aggravate)",
+      "Goblet": "Electro DMG%",
+      "Circlet": "CRIT Rate/DMG"
+    },
+    "substats_priority": [
+      "CRIT Rate/DMG",
+      "ATK%",
+      "EM",
+      "ER until ~130–150%"
+    ],
+    "er_requirements": [
+      {
+        "condition": "With Dendro batteries (Nahida/Traveler) + Fav",
+        "value": "≈120–140% ER"
+      },
+      {
+        "condition": "Without batteries",
+        "value": "≈140–170% ER"
+      }
+    ],
+    "talent_priority": [
+      "Burst > Skill > Normal Attack"
+    ],
+    "team_comps": [
+      {
+        "name": "Cyno Quicken",
+        "members": [
+          {
+            "name": "Cyno",
+            "role": "On-field DPS"
+          },
+          {
+            "name": "Nahida",
+            "role": "Dendro appl."
+          },
+          {
+            "name": "Fischl/Yae",
+            "role": "Off-field Electro"
+          },
+          {
+            "name": "Zhongli/Healer",
+            "role": "Comfort"
+          }
+        ],
+        "notes": "Long Burst rotations; ensure interruption resist."
+      },
+      {
+        "name": "Cyno Hyperbloom (driver)",
+        "members": [
+          {
+            "name": "Cyno",
+            "role": "On-field driver"
+          },
+          {
+            "name": "Nahida",
+            "role": "Dendro"
+          },
+          {
+            "name": "Kokomi/Xingqiu",
+            "role": "Hydro"
+          },
+          {
+            "name": "Kuki",
+            "role": "Hyperbloom trigger + heal"
+          }
+        ],
+        "notes": "Less common but viable with EM leaning."
+      }
+    ],
+    "pros_cons": {
+      "pros": [
+        "Excellent sustained DPS window",
+        "Great synergy with Dendro",
+        "Strong 4★ weapon availability"
+      ],
+      "cons": [
+        "Rotation length locks-in field time",
+        "Needs interruption resistance and ER tuning"
+      ],
+      "playstyle_notes": [
+        "Time Skill procs within Burst; pre-funnel particles before entering"
+      ]
+    },
+    "materials": {
+      "character_ascension": [
+        "Vajrada Amethyst",
+        "Thunderclap Fruitcore",
+        "Scarab",
+        "Specter drops"
+      ],
+      "talent_ascension": [
+        "Teachings/Guide/Philosophies of Admonition",
+        "Specter drops",
+        "Mudra of the Malefic General (Raiden)"
+      ]
+    }
+  },
+  {
+    "slug": "keqing",
+    "name": "Keqing",
+    "element": "Electro",
+    "weapon_type": "Sword",
+    "role(s)": [
+      "On-field Aggravate DPS",
+      "Quick-swap DPS"
+    ],
+    "lore": {
+      "short": "The Yuheng of the Liyue Qixing. Agile Electro sword user who excels in Quicken teams."
+    },
+    "weapons": [
+      {
+        "name": "Mistsplitter Reforged",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 1,
+        "notes": "Top Electro DPS option."
+      },
+      {
+        "name": "Primordial Jade Cutter",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 2,
+        "notes": "Huge CRIT/HP stat stick."
+      },
+      {
+        "name": "Lion’s Roar / The Black Sword",
+        "rarity": "4★",
+        "recommended_refinement": "R5/R1+",
+        "rank": 3,
+        "notes": "Electro reaction bonus / BP consistency."
+      }
+    ],
+    "artifacts": [
+      {
+        "set": "4pc Thundering Fury",
+        "notes": "Aggravate-focused best set."
+      },
+      {
+        "set": "4pc Gilded Dreams",
+        "notes": "High EM alternative."
+      },
+      {
+        "set": "2pc TF + 2pc ATK%/EM",
+        "notes": "Early mix."
+      }
+    ],
+    "main_stats": {
+      "Sands": "ATK% (or EM for Aggravate)",
+      "Goblet": "Electro DMG%",
+      "Circlet": "CRIT Rate/DMG"
+    },
+    "substats_priority": [
+      "CRIT Rate/DMG",
+      "ATK%",
+      "EM",
+      "ER until ~120–140%"
+    ],
+    "er_requirements": [
+      {
+        "condition": "General Aggravate teams",
+        "value": "≈120–140% ER"
+      }
+    ],
+    "talent_priority": [
+      "Normal Attack > Skill > Burst"
+    ],
+    "team_comps": [
+      {
+        "name": "Keqing Aggravate",
+        "members": [
+          {
+            "name": "Keqing",
+            "role": "On-field DPS"
+          },
+          {
+            "name": "Nahida/DMC",
+            "role": "Dendro auras"
+          },
+          {
+            "name": "Fischl",
+            "role": "Off-field Electro"
+          },
+          {
+            "name": "Kazuha/Zhongli",
+            "role": "Shred/comfort"
+          }
+        ],
+        "notes": "High uptime on Aggravate with Fischl."
+      },
+      {
+        "name": "Quick-swap Electro",
+        "members": [
+          {
+            "name": "Keqing",
+            "role": "Driver"
+          },
+          {
+            "name": "Yae",
+            "role": "Turrets"
+          },
+          {
+            "name": "Bennett",
+            "role": "ATK/Heal"
+          },
+          {
+            "name": "Kazuha",
+            "role": "VV shred"
+          }
+        ],
+        "notes": "Fast rotations with strong buffs."
+      }
+    ],
+    "pros_cons": {
+      "pros": [
+        "High mobility",
+        "Great with common 4★ supports",
+        "Aggravate raises ceiling"
+      ],
+      "cons": [
+        "Middling pre-Dendro damage ceiling",
+        "Energy needs if spamming Q"
+      ],
+      "playstyle_notes": [
+        "E mark → teleport NA strings; swirl Electro for VV shred when possible"
+      ]
+    },
+    "materials": {
+      "character_ascension": [
+        "Vajrada Amethyst",
+        "Lightning Prism",
+        "Cor Lapis",
+        "Whopperflower Nectars"
+      ],
+      "talent_ascension": [
+        "Teachings/Guide/Philosophies of Prosperity",
+        "Whopperflower drops",
+        "Ring of Boreas (Andrius)"
+      ]
+    }
+  },
+  {
+    "slug": "venti",
+    "name": "Venti",
+    "element": "Anemo",
+    "weapon_type": "Bow",
+    "role(s)": [
+      "Crowd Control Support",
+      "Swirl VV shred",
+      "Battery"
+    ],
+    "lore": {
+      "short": "The Anemo Archon, Barbatos. S-tier grouping and VV shred to supercharge reaction teams."
+    },
+    "weapons": [
+      {
+        "name": "Elegy for the End",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 1,
+        "notes": "Team EM/ATK buff + ER; premier support bow."
+      },
+      {
+        "name": "The Stringless",
+        "rarity": "4★",
+        "recommended_refinement": "R5",
+        "rank": 2,
+        "notes": "Great reaction & Skill/Burst damage."
+      },
+      {
+        "name": "Favonius Warbow",
+        "rarity": "4★",
+        "recommended_refinement": "R3+",
+        "rank": 3,
+        "notes": "Battery option for team ER."
+      }
+    ],
+    "artifacts": [
+      {
+        "set": "4pc Viridescent Venerer",
+        "notes": "BiS; 40% shred of absorbed element."
+      },
+      {
+        "set": "2pc EM + 2pc EM/ER",
+        "notes": "Stopgap until VV set is farmed."
+      },
+      {
+        "set": "4pc Noblesse Oblige",
+        "notes": "Only if VV shred already covered (rare)."
+      }
+    ],
+    "main_stats": {
+      "Sands": "ER% or EM (team-dependent)",
+      "Goblet": "Anemo DMG% or EM",
+      "Circlet": "CRIT/EM"
+    },
+    "substats_priority": [
+      "ER until requirement",
+      "EM",
+      "CRIT"
+    ],
+    "er_requirements": [
+      {
+        "condition": "General support",
+        "value": "≈140–180% ER (lower with Favonius/particles)"
+      }
+    ],
+    "talent_priority": [
+      "Burst > Skill > Normal Attack"
+    ],
+    "team_comps": [
+      {
+        "name": "Freeze Venti",
+        "members": [
+          {
+            "name": "Venti",
+            "role": "CC + VV shred"
+          },
+          {
+            "name": "Ayaka/Ganyu",
+            "role": "Main DPS"
+          },
+          {
+            "name": "Mona/Kokomi",
+            "role": "Hydro"
+          },
+          {
+            "name": "Shenhe/Diona",
+            "role": "Cryo buffer or shield"
+          }
+        ],
+        "notes": "Vacuum Freeze destroys mob waves."
+      },
+      {
+        "name": "National Swirl",
+        "members": [
+          {
+            "name": "Venti",
+            "role": "Grouping + shred"
+          },
+          {
+            "name": "Xiangling",
+            "role": "Pyro off-field"
+          },
+          {
+            "name": "Xingqiu",
+            "role": "Hydro off-field"
+          },
+          {
+            "name": "Bennett",
+            "role": "ATK/Heal"
+          }
+        ],
+        "notes": "Classic AoE blender with strong batterying."
+      }
+    ],
+    "pros_cons": {
+      "pros": [
+        "Best grouping vs light enemies",
+        "Massive reaction amp via VV",
+        "Low field time"
+      ],
+      "cons": [
+        "Weak vs heavy/boss enemies",
+        "Needs absorbable element in Burst"
+      ],
+      "playstyle_notes": [
+        "Absorb correct element; swirl shred before DPS enters"
+      ]
+    },
+    "materials": {
+      "character_ascension": [
+        "Vayuda Turquoise",
+        "Hurricane Seed",
+        "Cecilia",
+        "Slime drops"
+      ],
+      "talent_ascension": [
+        "Teachings/Guide/Philosophies of Ballad",
+        "Slime drops",
+        "Tail of Boreas (Andrius)"
+      ]
+    }
+  },
+  {
+    "slug": "xiao",
+    "name": "Xiao",
+    "element": "Anemo",
+    "weapon_type": "Polearm",
+    "role(s)": [
+      "Main DPS (Plunge)"
+    ],
+    "lore": {
+      "short": "The vigilant Yaksha. Hypermobile plunge attacker with long Burst windows."
+    },
+    "weapons": [
+      {
+        "name": "Primordial Jade Winged-Spear",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 1,
+        "notes": "Top personal DPS."
+      },
+      {
+        "name": "Staff of Homa",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 2,
+        "notes": "Great stat stick."
+      },
+      {
+        "name": "Deathmatch/Blackcliff Pole",
+        "rarity": "4★",
+        "recommended_refinement": "R1+/R1+",
+        "rank": 3,
+        "notes": "Solid 4★ choices."
+      }
+    ],
+    "artifacts": [
+      {
+        "set": "4pc Vermillion Hereafter",
+        "notes": "BiS; plunge DMG and ATK buffs."
+      },
+      {
+        "set": "2pc Viridescent + 2pc ATK% (Glad/Shime)",
+        "notes": "Strong alternative."
+      },
+      {
+        "set": "4pc Desert Pavilion Chronicle",
+        "notes": "Usable but behind BiS."
+      }
+    ],
+    "main_stats": {
+      "Sands": "ATK%",
+      "Goblet": "Anemo DMG%",
+      "Circlet": "CRIT Rate/DMG"
+    },
+    "substats_priority": [
+      "CRIT Rate/DMG",
+      "ATK%",
+      "ER (until requirement)"
+    ],
+    "er_requirements": [
+      {
+        "condition": "With battery (Faru./Jean) + Fav",
+        "value": "≈120–130% ER"
+      },
+      {
+        "condition": "No battery",
+        "value": "≈140–160% ER"
+      }
+    ],
+    "talent_priority": [
+      "Normal Attack > Burst > Skill"
+    ],
+    "team_comps": [
+      {
+        "name": "Xiao Double Anemo",
+        "members": [
+          {
+            "name": "Xiao",
+            "role": "On-field DPS"
+          },
+          {
+            "name": "Faruzan/Jean",
+            "role": "Anemo battery/buffs/heal"
+          },
+          {
+            "name": "Zhongli",
+            "role": "Shield"
+          },
+          {
+            "name": "Bennett",
+            "role": "ATK/Heal"
+          }
+        ],
+        "notes": "Comfortable sustain and strong buffs."
+      },
+      {
+        "name": "Xiao + Furina",
+        "members": [
+          {
+            "name": "Xiao",
+            "role": "On-field DPS"
+          },
+          {
+            "name": "Furina",
+            "role": "Teamwide dmg buff"
+          },
+          {
+            "name": "Jean",
+            "role": "Battery + cleanse"
+          },
+          {
+            "name": "Zhongli",
+            "role": "Shield"
+          }
+        ],
+        "notes": "Furina buffs long Burst windows heavily."
+      }
+    ],
+    "pros_cons": {
+      "pros": [
+        "Top sustained DPS window",
+        "Excellent mobility",
+        "Simple rotation"
+      ],
+      "cons": [
+        "Needs battery and shield for comfort",
+        "Little off-field contribution"
+      ],
+      "playstyle_notes": [
+        "Pre-funnel particles; maintain plunge rhythm; avoid stamina loss mid-air"
+      ]
+    },
+    "materials": {
+      "character_ascension": [
+        "Vayuda Turquoise",
+        "Juvenile Jade",
+        "Qingxin",
+        "Slime drops"
+      ],
+      "talent_ascension": [
+        "Teachings/Guide/Philosophies of Prosperity",
+        "Slime drops",
+        "Shadow of the Warrior (Childe)"
+      ]
+    }
+  },
+  {
+    "slug": "arataki-itto",
+    "name": "Arataki Itto",
+    "element": "Geo",
+    "weapon_type": "Claymore",
+    "role(s)": [
+      "Main DPS (Geo)"
+    ],
+    "lore": {
+      "short": "The One and Oni. DEF-scaling Geo carry who shines with Gorou and Geo teammates."
+    },
+    "weapons": [
+      {
+        "name": "Redhorn Stonethresher",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 1,
+        "notes": "Signature; DEF→CRIT scaling."
+      },
+      {
+        "name": "Serpent Spine",
+        "rarity": "4★",
+        "recommended_refinement": "R5",
+        "rank": 2,
+        "notes": "Great 4★ for CRIT/DMG."
+      },
+      {
+        "name": "Whiteblind",
+        "rarity": "4★",
+        "recommended_refinement": "R5",
+        "rank": 3,
+        "notes": "Craftable DEF-stacking option."
+      }
+    ],
+    "artifacts": [
+      {
+        "set": "4pc Husk of Opulent Dreams",
+        "notes": "BiS; DEF stacks = dmg."
+      },
+      {
+        "set": "2pc Husk + 2pc Archaic Petra",
+        "notes": "Solid mixed set."
+      },
+      {
+        "set": "4pc Gladiator",
+        "notes": "Fallback early set."
+      }
+    ],
+    "main_stats": {
+      "Sands": "DEF%",
+      "Goblet": "Geo DMG%",
+      "Circlet": "CRIT Rate/DMG"
+    },
+    "substats_priority": [
+      "CRIT Rate/DMG",
+      "DEF%",
+      "ER until ~120%"
+    ],
+    "er_requirements": [
+      {
+        "condition": "Mono Geo with Gorou/Albedo",
+        "value": "≈110–130% ER"
+      }
+    ],
+    "talent_priority": [
+      "Normal Attack > Burst > Skill"
+    ],
+    "team_comps": [
+      {
+        "name": "Mono Geo",
+        "members": [
+          {
+            "name": "Itto",
+            "role": "Main DPS"
+          },
+          {
+            "name": "Gorou",
+            "role": "Geo buffer"
+          },
+          {
+            "name": "Albedo",
+            "role": "Off-field Geo"
+          },
+          {
+            "name": "Zhongli",
+            "role": "Shield"
+          }
+        ],
+        "notes": "Peak Itto performance; easy energy funnel."
+      },
+      {
+        "name": "Itto + Furina",
+        "members": [
+          {
+            "name": "Itto",
+            "role": "On-field"
+          },
+          {
+            "name": "Furina",
+            "role": "Team buff"
+          },
+          {
+            "name": "Gorou",
+            "role": "Geo buffer"
+          },
+          {
+            "name": "Zhongli",
+            "role": "Shield"
+          }
+        ],
+        "notes": "Furina buffs NA strings heavily."
+      }
+    ],
+    "pros_cons": {
+      "pros": [
+        "Simple rotation with huge numbers",
+        "Great F2P options",
+        "Tanky playstyle"
+      ],
+      "cons": [
+        "Team-locked (wants Gorou/Geo)",
+        "Lower off-field utility"
+      ],
+      "playstyle_notes": [
+        "Build stacks before Burst; hold combos during Burst with charged attacks"
+      ]
+    },
+    "materials": {
+      "character_ascension": [
+        "Prithiva Topaz",
+        "Riftborn Regalia",
+        "Onikabuto",
+        "Slime drops"
+      ],
+      "talent_ascension": [
+        "Teachings/Guide/Philosophies of Elegance",
+        "Slime drops",
+        "Ashen Heart (La Signora)"
+      ]
+    }
+  },
+  {
+    "slug": "navia",
+    "name": "Navia",
+    "element": "Geo",
+    "weapon_type": "Claymore",
+    "role(s)": [
+      "On-field Geo DPS (Crystallize shrapnel)"
+    ],
+    "lore": {
+      "short": "Spina di Rosula’s lady. Converts Crystallize shards into powerful shotgun volleys."
+    },
+    "weapons": [
+      {
+        "name": "Verdict",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 1,
+        "notes": "Signature; top personal DPS."
+      },
+      {
+        "name": "Serpent Spine",
+        "rarity": "4★",
+        "recommended_refinement": "R5",
+        "rank": 2,
+        "notes": "Excellent CRIT/DMG option."
+      },
+      {
+        "name": "Beacon of the Reed Sea",
+        "rarity": "5★",
+        "recommended_refinement": "R1+",
+        "rank": 3,
+        "notes": "Strong ATK/CRIT stat stick."
+      }
+    ],
+    "artifacts": [
+      {
+        "set": "4pc Nighttime Whispers in the Echoing Woods",
+        "notes": "Best for Geo NA/Skill damage."
+      },
+      {
+        "set": "4pc Marechaussee Hunter",
+        "notes": "Great with Furina HP fluctuation."
+      },
+      {
+        "set": "2pc Geo DMG + 2pc ATK%",
+        "notes": "Early mixed option."
+      }
+    ],
+    "main_stats": {
+      "Sands": "ATK%",
+      "Goblet": "Geo DMG%",
+      "Circlet": "CRIT Rate/DMG"
+    },
+    "substats_priority": [
+      "CRIT Rate/DMG",
+      "ATK%",
+      "ER until ~140–160%"
+    ],
+    "er_requirements": [
+      {
+        "condition": "General teams (no Geo battery)",
+        "value": "≈140–160% ER"
+      },
+      {
+        "condition": "With Geo battery (Gorou/Albedo)",
+        "value": "≈120–140% ER"
+      }
+    ],
+    "talent_priority": [
+      "Skill > Normal Attack > Burst"
+    ],
+    "team_comps": [
+      {
+        "name": "Navia Furina Core",
+        "members": [
+          {
+            "name": "Navia",
+            "role": "On-field DPS"
+          },
+          {
+            "name": "Furina",
+            "role": "Buff + off-field dmg"
+          },
+          {
+            "name": "Bennett",
+            "role": "ATK/Heal"
+          },
+          {
+            "name": "Zhongli",
+            "role": "Shield + RES shred"
+          }
+        ],
+        "notes": "Generate crystals via Pyro/Hydro to load shrapnel."
+      },
+      {
+        "name": "Navia Geo Shell",
+        "members": [
+          {
+            "name": "Navia",
+            "role": "DPS"
+          },
+          {
+            "name": "Gorou",
+            "role": "Geo buffer"
+          },
+          {
+            "name": "Furina/Kazuha",
+            "role": "Buffing"
+          },
+          {
+            "name": "Albedo/Zhongli",
+            "role": "Geo off-field or shield"
+          }
+        ],
+        "notes": "Combines Geo buffs with Furina’s team-wide damage."
+      }
+    ],
+    "pros_cons": {
+      "pros": [
+        "High frontloaded Skill damage",
+        "Great with Furina",
+        "Comfortable claymore strings"
+      ],
+      "cons": [
+        "Wants consistent Crystallize shards",
+        "ER checks without batteries"
+      ],
+      "playstyle_notes": [
+        "Pre-load shrapnel with reactions; fire Skill at 6 stacks for max damage"
+      ]
+    },
+    "materials": {
+      "character_ascension": [
+        "Prithiva Topaz",
+        "Artificed Spare Clockwork Component – Coppelius",
+        "Spring of the First Dewdrop",
+        "Transoceanic (Pearl/Chunk) & Xenochromatic Crystals"
+      ],
+      "talent_ascension": [
+        "Teachings/Guide/Philosophies of Order",
+        "Clockwork Meka drops",
+        "Lightless Mass (Narwhal)"
+      ]
+    }
+  }
+]
