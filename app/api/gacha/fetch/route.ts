@@ -27,34 +27,32 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "That does not look like a URL" }, { status: 400 });
   }
 
-  const params = new URLSearchParams(u.search);
-  const authkey = params.get("authkey");
-  if (!authkey) {
+  // Keep the query verbatim: round-tripping through URLSearchParams can
+  // corrupt authkeys, and the URL itself knows the right API host. The game
+  // moved to public-operation-hk4e-*; the old hk4e-api-os endpoint times out.
+  const rawQuery = u.search.replace(/^\?/, "");
+  if (!/(?:^|&)authkey=/.test(rawQuery)) {
     return NextResponse.json(
       { error: "No authkey found in that URL. Copy the full wish history URL." },
       { status: 400 }
     );
   }
+  const kept = rawQuery
+    .split("&")
+    .filter((p) => !/^(gacha_type|size|end_id|page|lang)=/.test(p))
+    .join("&");
 
-  const gameBiz = params.get("game_biz") || "hk4e_global";
-  const api =
-    gameBiz === "hk4e_cn"
-      ? "https://hk4e-api.mihoyo.com/event/gacha_info/api/getGachaLog"
-      : "https://hk4e-api-os.hoyoverse.com/event/gacha_info/api/getGachaLog";
+  const gameBiz = /(?:^|&)game_biz=([^&#]+)/.exec(rawQuery)?.[1] || "hk4e_global";
+  const api = /getGachaLog/i.test(u.pathname)
+    ? `${u.origin}${u.pathname}`
+    : gameBiz === "hk4e_cn"
+      ? "https://public-operation-hk4e.mihoyo.com/gacha_info/api/getGachaLog"
+      : "https://public-operation-hk4e-sg.hoyoverse.com/gacha_info/api/getGachaLog";
 
   async function fetchPage(gacha_type: string, end_id = "0"): Promise<any> {
-    const p = new URLSearchParams({
-      authkey_ver: params.get("authkey_ver") || "1",
-      sign_type: params.get("sign_type") || "2",
-      lang: "en",
-      game_biz: gameBiz,
-      authkey: authkey!,
-      gacha_type,
-      size: "20",
-      end_id,
-    });
+    const qs = `${kept}&lang=en&gacha_type=${gacha_type}&size=20&end_id=${end_id}`;
     for (let attempt = 0; attempt < 2; attempt++) {
-      const res = await fetch(`${api}?${p.toString()}`);
+      const res = await fetch(`${api}?${qs}`);
       const json = await res.json().catch(() => ({}));
       if (json?.retcode === -110) {
         // "visit too frequently": back off once and retry

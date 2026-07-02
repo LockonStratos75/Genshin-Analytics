@@ -59,6 +59,7 @@ if (-not (Test-Path $cacheFile)) {
 }
 
 # 4) copy (game keeps it locked) and scan for gacha URLs
+Write-Host 'Reading the game web cache...'
 $tmp = Join-Path $env:TEMP ('ga_data2_' + [IO.Path]::GetRandomFileName())
 Copy-Item $cacheFile $tmp -Force
 $content = Get-Content -Raw -Encoding UTF8 $tmp
@@ -72,30 +73,41 @@ if ($candidates.Count -eq 0) {
 }
 [array]::Reverse($candidates)
 
-# 5) validate newest-first against the gacha API
-Add-Type -AssemblyName System.Web
+# 5) validate newest-first against the gacha API.
+#    IMPORTANT: keep the query string verbatim (re-encoding corrupts authkeys
+#    that contain plus signs) and prefer the endpoint from the URL itself:
+#    the game switched to public-operation-hk4e-*.hoyoverse.com and the old
+#    hk4e-api-os endpoint now times out.
+Write-Host ('Found ' + $candidates.Count + ' cached URL(s). Testing newest first, this can take a moment...')
 foreach ($candidate in $candidates) {
     try {
         $uri = [uri]$candidate
-        $q = [System.Web.HttpUtility]::ParseQueryString($uri.Query)
-        $ak = $q['authkey']
-        if (-not $ak) { continue }
-        $biz = $q['game_biz']; if (-not $biz) { $biz = 'hk4e_global' }
-        $api = if ($biz -eq 'hk4e_cn') { 'https://hk4e-api.mihoyo.com/event/gacha_info/api/getGachaLog' }
-               else { 'https://hk4e-api-os.hoyoverse.com/event/gacha_info/api/getGachaLog' }
-        $test = $api + '?authkey_ver=1&sign_type=2&lang=en&gacha_type=301&size=5&end_id=0&game_biz=' + $biz +
-                '&authkey=' + [uri]::EscapeDataString($ak)
-        $resp = Invoke-RestMethod $test -TimeoutSec 15
+        $rawQuery = $uri.Query.TrimStart('?')
+        if ($rawQuery -notmatch 'authkey=') { continue }
+        $kept = @($rawQuery -split '&' | Where-Object { $_ -notmatch '^(gacha_type|size|end_id|page|lang)=' }) -join '&'
+        if ($uri.AbsolutePath -match 'getGachaLog') {
+            $api = $uri.Scheme + '://' + $uri.Host + $uri.AbsolutePath
+        } else {
+            $biz = [regex]::Match($rawQuery, 'game_biz=([^&#]+)').Groups[1].Value
+            $api = if ($biz -eq 'hk4e_cn') { 'https://public-operation-hk4e.mihoyo.com/gacha_info/api/getGachaLog' }
+                   else { 'https://public-operation-hk4e-sg.hoyoverse.com/gacha_info/api/getGachaLog' }
+        }
+        $test = $api + '?' + $kept + '&lang=en&gacha_type=301&size=5&end_id=0'
+        $resp = Invoke-RestMethod $test -TimeoutSec 10
         if ($resp.retcode -eq 0) {
             Set-Clipboard -Value $candidate
+            Write-Host ''
             Write-Host 'Success! Your wish history URL is in the clipboard.' -ForegroundColor Green
             Write-Host 'Paste it into the Wish Tracker import box and click "Fetch from URL".'
             return
         }
-    } catch { }
+        Write-Host ('  Skipped one URL (' + $resp.message + ')') -ForegroundColor DarkGray
+    } catch {
+        Write-Host '  Skipped one URL (endpoint not reachable)' -ForegroundColor DarkGray
+    }
 }
 
-Write-Host 'Found cached URLs, but they are all expired (authkeys last 24 hours).' -ForegroundColor Red
+Write-Host 'Found cached URLs, but none of them works (authkeys expire after 24 hours).' -ForegroundColor Red
 Write-Host 'Open Wish > History in the game to refresh it, then run this command again.' -ForegroundColor Yellow
 `;
 
