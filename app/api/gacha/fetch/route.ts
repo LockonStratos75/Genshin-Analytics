@@ -2,48 +2,126 @@ import { NextRequest, NextResponse } from "next/server";
 import { limiter } from "@/app/api/_utils";
 import type { Wish } from "@/lib/types";
 
-export async function POST(req: NextRequest){
-  if (!limiter(req.ip ?? "anon")) return NextResponse.json({ error: "Rate limited" }, { status: 429 });
+export const dynamic = "force-dynamic";
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * Accepts either the getGachaLog API URL or the wish-history page URL from the
+ * game's web cache (gs.hoyoverse.com/.../index.html?...authkey=...#/log) and
+ * always talks to the proper gacha API for the account's region.
+ */
+export async function POST(req: NextRequest) {
+  if (!limiter(req.ip ?? "anon")) {
+    return NextResponse.json({ error: "Rate limited" }, { status: 429 });
+  }
   const { url } = await req.json();
-  if (!url || typeof url !== "string") return NextResponse.json({ error: "Missing url" }, { status: 400 });
-
-  // Extract base & query
-  const u = new URL(url);
-  const base = `${u.origin}${u.pathname}`;
-  const params = new URLSearchParams(u.search);
-  const authkey = params.get("authkey");
-  if (!authkey) return NextResponse.json({ error: "No authkey in URL" }, { status: 400 });
-
-  async function fetchPage(gacha_type: string, end_id="0"){
-    const p = new URLSearchParams(u.search);
-    p.set("gacha_type", gacha_type);
-    p.set("size", "20");
-    p.set("end_id", end_id);
-    const res = await fetch(`${base}?${p.toString()}`);
-    const json = await res.json().catch(()=>({}));
-    return json?.data ?? { list: [], end_id: "0" };
+  if (!url || typeof url !== "string") {
+    return NextResponse.json({ error: "Missing url" }, { status: 400 });
   }
 
-  const gachaTypes = ["100","200","301","302"]; // novice, standard, char, weapon
-  const wishes: Wish[] = [];
-  for (const gt of gachaTypes){
-    let end = "0";
-    for (let i=0; i<30; i++){ // up to 600 pulls per banner in MVP
-      const page = await fetchPage(gt, end);
-      const list = page.list || [];
-      for (const x of list){
-        wishes.push({
-          id: String(x.id),
-          time: new Date(x.time).toISOString(),
-          name: x.name,
-          rank_type: String(x.rank_type) as any,
-          item_type: x.item_type === "角色" ? "Character" : (x.item_type === "武器" ? "Weapon" : (x.item_type || "Weapon")),
-          banner: gt === "301" ? "character" : gt === "302" ? "weapon" : "standard"
-        });
+  let u: URL;
+  try {
+    u = new URL(url.trim());
+  } catch {
+    return NextResponse.json({ error: "That does not look like a URL" }, { status: 400 });
+  }
+
+  const params = new URLSearchParams(u.search);
+  const authkey = params.get("authkey");
+  if (!authkey) {
+    return NextResponse.json(
+      { error: "No authkey found in that URL. Copy the full wish history URL." },
+      { status: 400 }
+    );
+  }
+
+  const gameBiz = params.get("game_biz") || "hk4e_global";
+  const api =
+    gameBiz === "hk4e_cn"
+      ? "https://hk4e-api.mihoyo.com/event/gacha_info/api/getGachaLog"
+      : "https://hk4e-api-os.hoyoverse.com/event/gacha_info/api/getGachaLog";
+
+  async function fetchPage(gacha_type: string, end_id = "0"): Promise<any> {
+    const p = new URLSearchParams({
+      authkey_ver: params.get("authkey_ver") || "1",
+      sign_type: params.get("sign_type") || "2",
+      lang: "en",
+      game_biz: gameBiz,
+      authkey: authkey!,
+      gacha_type,
+      size: "20",
+      end_id,
+    });
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const res = await fetch(`${api}?${p.toString()}`);
+      const json = await res.json().catch(() => ({}));
+      if (json?.retcode === -110) {
+        // "visit too frequently": back off once and retry
+        await sleep(2000);
+        continue;
       }
-      if (!list.length || page.list.length < 20) break;
-      end = page.list[page.list.length-1].id;
+      if (json?.retcode !== 0) {
+        const msg = json?.message || `retcode ${json?.retcode}`;
+        throw new Error(msg === "authkey timeout" ? "AUTHKEY_EXPIRED" : msg);
+      }
+      return json.data ?? { list: [] };
     }
+    throw new Error("Gacha API keeps throttling; try again in a minute.");
+  }
+
+  // 100 novice, 200 standard, 301+400 character (shared pity), 302 weapon, 500 chronicled
+  const banners: Array<[string, Wish["banner"] | "chronicled"]> = [
+    ["100", "standard"],
+    ["200", "standard"],
+    ["301", "character"],
+    ["400", "character"],
+    ["302", "weapon"],
+    ["500", "chronicled" as any],
+  ];
+
+  const wishes: Wish[] = [];
+  try {
+    for (const [gt, banner] of banners) {
+      let end = "0";
+      for (let i = 0; i < 60; i++) {
+        // up to 1200 pulls per banner
+        const page = await fetchPage(gt, end);
+        const list = page.list || [];
+        for (const x of list) {
+          wishes.push({
+            id: String(x.id),
+            time: new Date(x.time).toISOString(),
+            name: x.name,
+            rank_type: String(x.rank_type) as any,
+            item_type:
+              x.item_type === "角色"
+                ? "Character"
+                : x.item_type === "武器"
+                  ? "Weapon"
+                  : x.item_type || "Weapon",
+            banner: banner as any,
+          });
+        }
+        if (list.length < 20) break;
+        end = list[list.length - 1].id;
+        await sleep(350);
+      }
+    }
+  } catch (e: any) {
+    if (String(e?.message) === "AUTHKEY_EXPIRED") {
+      return NextResponse.json(
+        {
+          error:
+            "This authkey has expired (they last 24 hours). Open Wish > History in game again and grab a fresh URL.",
+        },
+        { status: 400 }
+      );
+    }
+    return NextResponse.json(
+      { error: `Gacha API error: ${e?.message || e}` },
+      { status: 502 }
+    );
   }
 
   return NextResponse.json(wishes);

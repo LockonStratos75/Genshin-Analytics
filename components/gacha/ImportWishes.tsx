@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Link2, Upload, Download, Trash2, Loader2 } from "lucide-react";
+import { Link2, Upload, Download, Trash2, Loader2, Terminal, Copy, Check } from "lucide-react";
 import * as XLSX from "xlsx";
 import Papa from "papaparse";
 import useStore from "@/lib/store";
@@ -111,8 +111,8 @@ export default function ImportWishes() {
     <div className="card p-5">
       <h2 className="text-base font-semibold text-white">Import wish history</h2>
       <p className="mt-1 text-[13px] leading-relaxed text-mist-dim">
-        In game, open Wishes, then History, then copy the page URL (on PC it opens in a browser).
-        Paste it below. You can also upload a UIGF .json or .xlsx export from another tracker.
+        Paste your wish history URL below, or upload a UIGF .json / .xlsx export from another
+        tracker. On PC the easiest way to get the URL is the PowerShell helper underneath.
       </p>
 
       <div className="mt-4 flex flex-col gap-2 sm:flex-row">
@@ -173,6 +173,68 @@ export default function ImportWishes() {
           {message.text}
         </p>
       )}
+
+      <PowershellHelper />
     </div>
+  );
+}
+
+function PowershellHelper() {
+  const [origin, setOrigin] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    setOrigin(window.location.origin);
+  }, []);
+
+  // Download to a file first: executing straight from memory (iex) trips
+  // Windows Defender's AMSI heuristics, while the same script runs fine from disk.
+  const command = origin
+    ? `irm ${origin}/api/wish-script -OutFile $env:TEMP\\ga-wish.ps1; powershell -NoProfile -ExecutionPolicy Bypass -File $env:TEMP\\ga-wish.ps1`
+    : "";
+
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(command);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {}
+  }
+
+  return (
+    <details className="group mt-4 rounded-lg border border-white/[0.07] bg-ink-950/40">
+      <summary className="flex cursor-pointer select-none items-center gap-2 px-4 py-3 text-[13px] font-medium text-mist-dim transition-colors hover:text-mist [&::-webkit-details-marker]:hidden">
+        <Terminal size={14} strokeWidth={1.5} className="text-gold-400" />
+        Can&apos;t copy the URL? Get it with PowerShell (Windows PC)
+      </summary>
+      <div className="border-t border-white/[0.06] px-4 py-4">
+        <ol className="list-decimal space-y-1.5 pl-4 text-[13px] leading-relaxed text-mist-dim">
+          <li>In the game, open Wishes and then History, and let it load once.</li>
+          <li>
+            Open <span className="text-mist">Windows PowerShell</span> (Start menu, type
+            &quot;powershell&quot;).
+          </li>
+          <li>Paste this command and press Enter:</li>
+        </ol>
+        <div className="mt-3 flex items-center gap-2">
+          <code className="stat-num min-w-0 flex-1 truncate rounded-lg border border-white/10 bg-ink-950 px-3 py-2.5 text-xs text-gold-300">
+            {command || "…"}
+          </code>
+          <button onClick={copy} className="btn-ghost shrink-0" disabled={!command}>
+            {copied ? (
+              <Check size={14} strokeWidth={2} className="text-element-anemo" />
+            ) : (
+              <Copy size={14} strokeWidth={1.5} />
+            )}
+            {copied ? "Copied" : "Copy"}
+          </button>
+        </div>
+        <p className="mt-3 text-xs leading-relaxed text-mist-faint">
+          The script reads the wish URL from your local game cache, checks it still works, and
+          puts it in your clipboard; paste it in the box above. Authkeys expire after 24 hours, so
+          reopen the in-game history if it reports the URL is stale.
+        </p>
+      </div>
+    </details>
   );
 }
