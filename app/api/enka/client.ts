@@ -23,6 +23,12 @@ async function createClient(): Promise<EnkaClient> {
         // Vercel egress can be slow on cold starts
         requestTimeout: 15000,
         userAgent: "Mozilla/5.0",
+        // Default base URLs prefer homdgcat.wiki, which no longer resolves.
+        // Serve everything from the Enka CDN with yatta.moe as fallback.
+        imageBaseUrls: [
+            { url: "https://enka.network/ui", priority: 20, format: "PNG", regexList: [/.*/] },
+            { url: "https://gi.yatta.moe/assets/UI", priority: 3, format: "PNG", regexList: [/.*/] },
+        ],
     });
 
     enka.cachedAssetsManager.cacheDirectorySetup();

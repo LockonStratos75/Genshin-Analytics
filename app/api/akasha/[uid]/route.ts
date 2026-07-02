@@ -1,119 +1,52 @@
-// app/api/akasha/[uid]/route.ts
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-import "server-only";
 import type { NextRequest } from "next/server";
-import { revalidateTag } from "next/cache";
+import { getCalculationsForUser, clearAkashaCache } from "@/lib/akasha";
 
-// % helper
 const pct = (n?: number, d?: number) =>
-    typeof n === "number" && typeof d === "number" && d > 0 ? (n / d) * 100 : undefined;
+  typeof n === "number" && typeof d === "number" && d > 0 ? (n / d) * 100 : undefined;
 
-// Singleton client
-let _akasha: any;
-async function getClient() {
-    if (_akasha) return _akasha;
+/** GET /api/akasha/:uid — ranked calculations for a player. */
+export async function GET(_req: NextRequest, { params }: { params: { uid: string } }) {
+  const uid = params?.uid;
+  if (!uid) return Response.json({ error: "Missing uid" }, { status: 400 });
 
-    // Try the package you found first; fall back to the alt name used in some READMEs
-    let mod: any;
-    try {
-        mod = await import("akasha-system.js");
-    } catch {
-        try {
-            mod = await import("akasha-system.js");
-        } catch (e) {
-            throw new Error(
-                "Cannot find akasha-system.js (or akasha.js). Install it with `npm i akasha-system.js`."
-            );
-        }
-    }
-    _akasha = new mod.default();
-    return _akasha;
-}
+  try {
+    const list = await getCalculationsForUser(uid);
 
-/**
- * GET /api/akasha/:uid
- * Returns cached Akasha calculations (10 min TTL) and tags the cache so POST can bust it.
- */
-export async function GET(
-    _req: NextRequest,
-    { params }: { params: { uid: string } }
-) {
-    const uid = params?.uid;
-    if (!uid) {
-        return new Response(JSON.stringify({ error: "Missing uid" }), {
-            status: 400,
-            headers: { "content-type": "application/json" },
-        });
-    }
-
-    try {
-        const ak = await getClient();
-
-        // Use Next’s route caching (revalidate + tag). The “fetch” below is a no-op fetch that
-        // just gives us a cached response envelope; the real API call happens inside.
-        const payload = await fetch("data:,", {
-            next: { revalidate: 600, tags: [`akasha:${uid}`] },
-        }).then(async () => {
-            const res = await ak.getCalculationsForUser(uid);
-            const list = Array.isArray(res?.data) ? res.data : [];
-
-            const calculations = list.map((ch: any) => {
-                const fit = ch?.calculations?.fit ?? {};
-                const topPercent = pct(fit?.ranking, fit?.outOf);
-                const calcId = fit?.id ?? fit?.calculationId;
-
-                return {
-                    character: ch?.name ?? "",
-                    characterId: ch?.id,
-                    calcId,
-                    weapon: fit?.weapon?.name,
-                    result: fit?.result,
-                    topPercent,
-                    rank: fit?.ranking,
-                    outOf: fit?.outOf,
-                    url: calcId ? `https://akasha.cv/leaderboards/${calcId}` : undefined,
-                };
-            });
-
-            return { uid, calculations };
-        });
-
-        return new Response(JSON.stringify(payload), {
-            status: 200,
-            headers: { "content-type": "application/json" },
-        });
-    } catch (e: any) {
-        return new Response(
-            JSON.stringify({
-                error: "Akasha error",
-                detail: String(e?.message || e),
-            }),
-            { status: 502, headers: { "content-type": "application/json" } }
-        );
-    }
-}
-
-/**
- * POST /api/akasha/:uid
- * Busts the cached GET immediately (used by the “Refresh Akasha” button).
- */
-export async function POST(
-    _req: NextRequest,
-    { params }: { params: { uid: string } }
-) {
-    const uid = params?.uid;
-    if (!uid) {
-        return new Response(JSON.stringify({ error: "Missing uid" }), {
-            status: 400,
-            headers: { "content-type": "application/json" },
-        });
-    }
-
-    revalidateTag(`akasha:${uid}`);
-    return new Response(JSON.stringify({ ok: true }), {
-        status: 200,
-        headers: { "content-type": "application/json" },
+    const calculations = (Array.isArray(list) ? list : []).map((ch: any) => {
+      const fit = ch?.calculations?.fit ?? {};
+      const calcId = fit?.id ?? fit?.calculationId;
+      return {
+        character: ch?.name ?? "",
+        characterId: ch?.characterId ?? ch?.id,
+        constellation: ch?.constellation,
+        icon: ch?.icon,
+        calcId,
+        calcName: fit?.name,
+        weapon: fit?.weapon?.name,
+        weaponIcon: fit?.weapon?.icon,
+        result: fit?.result,
+        topPercent: pct(fit?.ranking, fit?.outOf),
+        rank: fit?.ranking,
+        outOf: fit?.outOf,
+        url: calcId ? `https://akasha.cv/leaderboards/${calcId}` : undefined,
+      };
     });
+
+    return Response.json({ uid, calculations });
+  } catch (e: any) {
+    return Response.json(
+      { error: "Akasha error", detail: String(e?.message || e) },
+      { status: 502 }
+    );
+  }
+}
+
+/** POST /api/akasha/:uid — clears the server cache (Refresh button). */
+export async function POST(_req: NextRequest, { params }: { params: { uid: string } }) {
+  if (!params?.uid) return Response.json({ error: "Missing uid" }, { status: 400 });
+  clearAkashaCache();
+  return Response.json({ ok: true });
 }

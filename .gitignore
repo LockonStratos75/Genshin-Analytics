@@ -1,2 +1,9 @@
 /python-akasha/
 .cache/
+.enka-cache/
+node_modules/
+.next/
+.claude/
+*.tsbuildinfo
+next-env.d.ts
+.idea/

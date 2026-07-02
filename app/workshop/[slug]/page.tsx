@@ -1,365 +1,413 @@
-// path: app/workshop/[slug]/page.tsx
 import "server-only";
 import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowLeft, ThumbsUp, ThumbsDown } from "lucide-react";
 import db from "@/data/workshop-db.json";
+import { elementColor } from "@/lib/display";
 
 type Guide = {
-    slug: string;
+  slug: string;
+  name: string;
+  element?: string;
+  weapon_type?: string;
+  ["role(s)"]?: string[];
+  lore?: { short?: string };
+  weapons?: Array<{
     name: string;
-    element?: string;
-    weapon_type?: string;
-    ["role(s)"]?: string[];
-    lore?: { short?: string };
-    weapons?: Array<{
-        name: string;
-        rarity?: string;
-        recommended_refinement?: string;
-        rank?: number;
-        notes?: string;
-    }>;
-    artifacts?: Array<{ set: string; notes?: string }>;
-    main_stats?: Record<"Sands" | "Goblet" | "Circlet", string>;
-    substats_priority?: string[];
-    er_requirements?: Array<{ condition: string; value: string }>;
-    talent_priority?: string[];
-    team_comps?: Array<{ name: string; members: Array<{ name: string; role?: string }>; notes?: string }>;
-    pros_cons?: { pros?: string[]; cons?: string[]; playstyle_notes?: string[] };
-    materials?: { character_ascension?: string[]; talent_ascension?: string[] };
+    rarity?: string;
+    recommended_refinement?: string;
+    rank?: number;
+    notes?: string;
+  }>;
+  artifacts?: Array<{ set: string; notes?: string }>;
+  main_stats?: Record<"Sands" | "Goblet" | "Circlet", string>;
+  substats_priority?: string[];
+  er_requirements?: Array<{ condition: string; value: string }>;
+  talent_priority?: string[];
+  team_comps?: Array<{
+    name: string;
+    members: Array<{ name: string; role?: string }>;
+    notes?: string;
+  }>;
+  pros_cons?: { pros?: string[]; cons?: string[]; playstyle_notes?: string[] };
+  materials?: { character_ascension?: string[]; talent_ascension?: string[] };
 };
 
-export const dynamic = "force-dynamic";
-
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-    const g = (db as Guide[]).find((x) => x.slug === params.slug);
-    return { title: g ? `${g.name} • Paimon’s Workshop` : "Paimon’s Workshop" };
+export function generateStaticParams() {
+  return (db as Guide[]).map((g) => ({ slug: g.slug }));
 }
 
-/* ---------- filename helpers (match your local .webp names) ---------- */
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
+  const g = (db as Guide[]).find((x) => x.slug === params.slug);
+  return { title: g ? `${g.name} Build Guide · Genshin Analytics` : "Build Guide" };
+}
+
+/* ---------- filename helpers (match local .webp names) ---------- */
 
 function toWebpFilename(display: string) {
-    let x = (display || "")
-        .normalize("NFKD")
-        .replace(/[\u2018\u2019]/g, "'")
-        .replace(/[–—-]/g, "_")
-        .replace(/\s+/g, "_");
-    x = x.replace(/[^A-Za-z0-9_']/g, "_");
-    x = x.replace(/_+/g, "_").replace(/^_+|_+$/g, "");
-    return `${x}.webp`;
+  let x = (display || "")
+    .normalize("NFKD")
+    .replace(/[‘’]/g, "'")
+    .replace(/[–—-]/g, "_")
+    .replace(/\s+/g, "_");
+  x = x.replace(/[^A-Za-z0-9_']/g, "_");
+  x = x.replace(/_+/g, "_").replace(/^_+|_+$/g, "");
+  return `${x}.webp`;
 }
 
-function charIcon(name: string) {
-    return `/character_imgs/${encodeURIComponent(toWebpFilename(name))}`;
-}
-function weaponIcon(name: string) {
-    return `/weapons_imgs/${encodeURIComponent(toWebpFilename(name))}`;
-}
+const charIcon = (name: string) => `/character_imgs/${encodeURIComponent(toWebpFilename(name))}`;
+const weaponIcon = (name: string) => `/weapons_imgs/${encodeURIComponent(toWebpFilename(name))}`;
 
-/** Strip "2pc/4pc" etc. and split combos; then use first set name for the icon. */
 function extractArtifactSetName(label: string) {
-    let s = (label || "").trim();
-    s = s.replace(/\b(\d+)\s*[- ]*\s*(?:pc|piece|pieces)\b/gi, "").trim();
-    const first = s.split(/\s*(?:\+|\/|,|&|\band\b)\s*/i)[0]?.trim() || s;
-    return first.replace(/\s{2,}/g, " ");
+  let s = (label || "").trim();
+  s = s.replace(/\b(\d+)\s*[- ]*\s*(?:pc|piece|pieces)\b/gi, "").trim();
+  const first = s.split(/\s*(?:\+|\/|,|&|\band\b)\s*/i)[0]?.trim() || s;
+  return first.replace(/\s{2,}/g, " ");
 }
-function artifactIcon(label: string) {
-    const setName = extractArtifactSetName(label);
-    return `/artifact_imgs/${encodeURIComponent(toWebpFilename(setName))}`;
-}
+const artifactIcon = (label: string) =>
+  `/artifact_imgs/${encodeURIComponent(toWebpFilename(extractArtifactSetName(label)))}`;
 
-/* ---------- team member name → icon resolver (handles short/alias/combined) ---------- */
+/* ---------- team member alias resolver ---------- */
 
 const CHAR_ALIASES: Record<string, string> = {
-    // Archons / multi-word
-    "raiden": "Raiden Shogun",
-    "shogun": "Raiden Shogun",
-    "ei": "Raiden Shogun",
-    "yae": "Yae Miko",
-    "nahida": "Nahida",
-    "zhongli": "Zhongli",
-    "venti": "Venti",
-    "furina": "Furina",
-    "focalors": "Furina",
-
-    // First-name → full-name
-    "sara": "Kujou Sara",
-    "kazu": "Kaedehara Kazuha",
-    "kazuha": "Kaedehara Kazuha",
-    "ayaka": "Kamisato Ayaka",
-    "ayato": "Kamisato Ayato",
-    "kokomi": "Sangonomiya Kokomi",
-    "heizou": "Shikanoin Heizou",
-    "shinobu": "Kuki Shinobu",
-    "itto": "Arataki Itto",
-    "hutao": "Hu Tao",
-    "hu tao": "Hu Tao",
-    "scaramouche": "Wanderer",
-    "wanderer": "Wanderer",
-    "childe": "Tartaglia",
-
-    // Common short names/alts that already match
-    "xingqiu": "Xingqiu",
-    "yelan": "Yelan",
-    "bennett": "Bennett",
-    "baizhu": "Baizhu",
-    "yaoyao": "Yaoyao",
-    "sara c6 preferred": "Kujou Sara",
+  raiden: "Raiden Shogun",
+  shogun: "Raiden Shogun",
+  ei: "Raiden Shogun",
+  yae: "Yae Miko",
+  sara: "Kujou Sara",
+  kazu: "Kaedehara Kazuha",
+  kazuha: "Kaedehara Kazuha",
+  ayaka: "Kamisato Ayaka",
+  ayato: "Kamisato Ayato",
+  kokomi: "Sangonomiya Kokomi",
+  heizou: "Shikanoin Heizou",
+  shinobu: "Kuki Shinobu",
+  itto: "Arataki Itto",
+  hutao: "Hu Tao",
+  "hu tao": "Hu Tao",
+  scaramouche: "Wanderer",
+  childe: "Tartaglia",
+  focalors: "Furina",
 };
 
 function titleCase(s: string) {
-    return s
-        .toLowerCase()
-        .split(/[\s_-]+/)
-        .filter(Boolean)
-        .map((t) => t.charAt(0).toUpperCase() + t.slice(1))
-        .join(" ");
+  return s
+    .toLowerCase()
+    .split(/[\s_-]+/)
+    .filter(Boolean)
+    .map((t) => t.charAt(0).toUpperCase() + t.slice(1))
+    .join(" ");
 }
 
-/**
- * Given something like "Xingqiu/Yelan", "Sara (C6 preferred)", "Raiden (EM build)",
- * return a local image path that most likely exists.
- */
 function teamMemberIcon(raw: string) {
-    const base = (raw || "")
-        .replace(/\([^)]*\)/g, " ") // strip (...) notes
-        .replace(/\s+/g, " ")
-        .trim();
-
-    // Try first candidate among split tokens
-    const candidates = base.split(/\s*(?:\/|,|\+|&|\band\b|\bor\b)\s*/i).filter(Boolean);
-
-    for (const cand of candidates) {
-        const key = cand.toLowerCase().trim();
-        const mapped = CHAR_ALIASES[key] || CHAR_ALIASES[key.replace(/\s+/g, " ")] || undefined;
-
-        const canonical = mapped || titleCase(cand.trim());
-
-        // Prefer canonical directly
-        return charIcon(canonical);
-    }
-
-    // Fallback: original raw name normalized (unlikely to exist, but safe)
-    return charIcon(titleCase(base));
-}
-
-function pill(s: string) {
-    return (
-        <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-xs">
-      {s}
-    </span>
-    );
+  const base = (raw || "")
+    .replace(/\([^)]*\)/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  const candidates = base.split(/\s*(?:\/|,|\+|&|\band\b|\bor\b)\s*/i).filter(Boolean);
+  for (const cand of candidates) {
+    const key = cand.toLowerCase().trim();
+    const canonical = CHAR_ALIASES[key] || titleCase(cand.trim());
+    return charIcon(canonical);
+  }
+  return charIcon(titleCase(base));
 }
 
 /* ------------------------------ page ------------------------------ */
 
-export default async function Page({ params }: { params: { slug: string } }) {
-    const guides = db as Guide[];
-    const g = guides.find((x) => x.slug === params.slug);
-    if (!g) {
-        return (
-            <div className="p-6">
-                <h1 className="text-xl font-semibold">Not found</h1>
-                <p className="opacity-70 mt-1">There’s no guide for “{params.slug}”.</p>
-            </div>
-        );
-    }
-
+export default function GuidePage({ params }: { params: { slug: string } }) {
+  const g = (db as Guide[]).find((x) => x.slug === params.slug);
+  if (!g) {
     return (
-        <div className="space-y-10">
-            {/* Header */}
-            <header className="flex items-start justify-between gap-6">
-                <div className="min-w-0">
-                    <h1 className="text-3xl font-semibold">{g.name}</h1>
-                    {g.lore?.short ? <p className="opacity-80 mt-2 max-w-2xl">{g.lore.short}</p> : null}
-                    <div className="mt-3 flex flex-wrap gap-2">
-                        {g.element ? pill(g.element) : null}
-                        {g.weapon_type ? pill(g.weapon_type) : null}
-                        {(g["role(s)"] ?? []).map((r) => (
-                            <span key={r}>{pill(r)}</span>
-                        ))}
-                    </div>
-                </div>
-
-                <img
-                    src={charIcon(g.name)}
-                    alt={g.name}
-                    className="h-20 w-20 rounded-2xl object-cover border border-white/10 bg-white/5"
-                />
-            </header>
-
-            {/* Weapons */}
-            {!!g.weapons?.length && (
-                <section id="weapons" className="space-y-4">
-                    <h2 className="text-xl font-semibold">Best Weapons (1→5)</h2>
-                    <div className="grid gap-4 md:grid-cols-2">
-                        {g.weapons
-                            .slice()
-                            .sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99))
-                            .map((w) => (
-                                <div
-                                    key={`${w.rank}-${w.name}`}
-                                    className="flex gap-3 rounded-2xl border border-white/5 bg-white/5 p-4"
-                                >
-                                    <img src={weaponIcon(w.name)} alt={w.name} className="h-12 w-12 rounded-xl object-cover" />
-                                    <div className="min-w-0">
-                                        <div className="font-medium">
-                                            {w.rank ? `${w.rank}. ` : ""}
-                                            {w.name}{" "}
-                                            <span className="text-xs opacity-70 ml-1">{w.rarity ?? ""}</span>
-                                            {w.recommended_refinement ? (
-                                                <span className="text-[10px] ml-2 rounded px-1.5 py-0.5 bg-white/10">
-                          Ref {w.recommended_refinement}
-                        </span>
-                                            ) : null}
-                                        </div>
-                                        {w.notes ? <div className="opacity-80 text-sm">{w.notes}</div> : null}
-                                    </div>
-                                </div>
-                            ))}
-                    </div>
-                </section>
-            )}
-
-            {/* Artifacts */}
-            {!!g.artifacts?.length && (
-                <section id="artifacts" className="space-y-4">
-                    <h2 className="text-xl font-semibold">Best Artifact Sets (1→5)</h2>
-
-                    {(g.main_stats || g.substats_priority || g.er_requirements) && (
-                        <div className="rounded-2xl border border-white/5 bg-white/5 p-4">
-                            <div className="font-medium">Stat Priority</div>
-                            <div className="mt-2 grid gap-2 sm:grid-cols-3">
-                                {g.main_stats ? (
-                                    <>
-                                        <div>
-                                            <div className="text-xs opacity-60">Sands</div>
-                                            <div className="text-sm font-medium">{g.main_stats.Sands}</div>
-                                        </div>
-                                        <div>
-                                            <div className="text-xs opacity-60">Goblet</div>
-                                            <div className="text-sm font-medium">{g.main_stats.Goblet}</div>
-                                        </div>
-                                        <div>
-                                            <div className="text-xs opacity-60">Circlet</div>
-                                            <div className="text-sm font-medium">{g.main_stats.Circlet}</div>
-                                        </div>
-                                    </>
-                                ) : null}
-                            </div>
-                            {g.substats_priority?.length ? (
-                                <div className="mt-3 text-sm">
-                                    <span className="opacity-60 mr-1">Substats:</span>
-                                    {g.substats_priority.join(" → ")}
-                                </div>
-                            ) : null}
-                            {g.er_requirements?.length ? (
-                                <div className="mt-2 space-y-1">
-                                    {g.er_requirements.map((e) => (
-                                        <div key={e.condition} className="text-sm">
-                                            <span className="rounded bg-white/10 px-1.5 py-0.5 text-[10px] mr-2">ER</span>
-                                            <span className="font-medium">{e.value}</span>
-                                            <span className="opacity-70 ml-2">— {e.condition}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : null}
-                        </div>
-                    )}
-
-                    <div className="grid gap-4 md:grid-cols-2">
-                        {g.artifacts.map((a, i) => {
-                            const iconSrc = artifactIcon(a.set);
-                            return (
-                                <div key={`${i}-${a.set}`} className="flex gap-3 rounded-2xl border border-white/5 bg-white/5 p-4">
-                                    <img src={iconSrc} alt={a.set} className="h-12 w-12 rounded-xl object-cover" />
-                                    <div className="min-w-0">
-                                        <div className="font-medium">{`${i + 1}. ${a.set}`}</div>
-                                        {a.notes ? <div className="opacity-80 text-sm">{a.notes}</div> : null}
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </section>
-            )}
-
-            {/* Teams (with robust icon resolver) */}
-            {!!g.team_comps?.length && (
-                <section id="teams" className="space-y-4">
-                    <h2 className="text-xl font-semibold">Best Team Compositions</h2>
-                    <div className="grid gap-4">
-                        {g.team_comps.map((t) => (
-                            <div key={t.name} className="rounded-2xl border border-white/5 bg-white/5 p-4">
-                                <div className="font-medium">{t.name}</div>
-                                <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                                    {t.members.map((m, idx) => (
-                                        <div key={`${t.name}-${m.name}-${idx}`} className="flex items-center gap-3">
-                                            <img
-                                                src={teamMemberIcon(m.name)}
-                                                alt={m.name}
-                                                className="h-9 w-9 rounded-lg object-cover border border-white/10 bg-white/5"
-                                            />
-                                            <div className="min-w-0">
-                                                <div className="text-sm font-medium">{m.name}</div>
-                                                {m.role ? <div className="text-xs opacity-70">{m.role}</div> : null}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                                {t.notes ? <div className="opacity-80 text-sm mt-3">{t.notes}</div> : null}
-                            </div>
-                        ))}
-                    </div>
-                </section>
-            )}
-
-            {/* Pros/Cons & Materials */}
-            {(g.pros_cons?.pros?.length || g.pros_cons?.cons?.length) && (
-                <section id="proscons" className="space-y-4">
-                    <h2 className="text-xl font-semibold">Pros & Cons</h2>
-                    <div className="grid gap-4 sm:grid-cols-2">
-                        <div className="rounded-2xl border border-white/5 bg-white/5 p-4">
-                            <div className="font-medium mb-2">Pros</div>
-                            <ul className="list-disc pl-5 space-y-1">
-                                {(g.pros_cons?.pros ?? []).map((p) => <li key={p}>{p}</li>)}
-                            </ul>
-                        </div>
-                        <div className="rounded-2xl border border-white/5 bg-white/5 p-4">
-                            <div className="font-medium mb-2">Cons</div>
-                            <ul className="list-disc pl-5 space-y-1">
-                                {(g.pros_cons?.cons ?? []).map((c) => <li key={c}>{c}</li>)}
-                            </ul>
-                        </div>
-                    </div>
-                    {g.pros_cons?.playstyle_notes?.length ? (
-                        <div className="rounded-2xl border border-white/5 bg-white/5 p-4">
-                            <div className="font-medium mb-2">Tips & Rotations</div>
-                            <ul className="list-disc pl-5 space-y-1">
-                                {g.pros_cons.playstyle_notes.map((n) => <li key={n}>{n}</li>)}
-                            </ul>
-                        </div>
-                    ) : null}
-                </section>
-            )}
-
-            {(g.materials?.character_ascension?.length || g.materials?.talent_ascension?.length) && (
-                <section id="materials" className="space-y-4">
-                    <h2 className="text-xl font-semibold">Ascension & Materials</h2>
-                    <div className="grid gap-4 sm:grid-cols-2">
-                        <div className="rounded-2xl border border-white/5 bg-white/5 p-4">
-                            <div className="font-medium mb-2">Character Ascension</div>
-                            <ul className="list-disc pl-5 space-y-1">
-                                {(g.materials?.character_ascension ?? []).map((m) => <li key={m}>{m}</li>)}
-                            </ul>
-                        </div>
-                        <div className="rounded-2xl border border-white/5 bg-white/5 p-4">
-                            <div className="font-medium mb-2">Talent Materials</div>
-                            <ul className="list-disc pl-5 space-y-1">
-                                {(g.materials?.talent_ascension ?? []).map((m) => <li key={m}>{m}</li>)}
-                            </ul>
-                        </div>
-                    </div>
-                </section>
-            )}
-        </div>
+      <div className="card p-8 text-center">
+        <h1 className="text-lg font-semibold text-white">Guide not found</h1>
+        <p className="page-sub">There is no build guide for &quot;{params.slug}&quot; yet.</p>
+        <Link href="/workshop" className="btn-ghost mt-4">
+          All guides
+        </Link>
+      </div>
     );
+  }
+
+  const el = elementColor(g.element);
+  const rankedWeapons = (g.weapons ?? []).slice().sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99));
+
+  return (
+    <div>
+      <Link
+        href="/workshop"
+        className="inline-flex items-center gap-1.5 text-sm text-mist-dim transition-colors hover:text-mist"
+      >
+        <ArrowLeft size={15} strokeWidth={1.5} /> Build Guides
+      </Link>
+
+      {/* Header */}
+      <header className="card relative mt-4 overflow-hidden">
+        <div
+          className="absolute inset-0"
+          style={{ background: `radial-gradient(640px 280px at 10% 0%, ${el}1c, transparent 70%)` }}
+        />
+        <div className="relative flex flex-wrap items-center gap-5 p-6 md:p-8">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={charIcon(g.name)}
+            alt={g.name}
+            className="h-24 w-24 rounded-xl border border-white/10 object-cover"
+          />
+          <div className="min-w-0 flex-1">
+            <h1 className="text-3xl font-semibold tracking-tight text-white">{g.name}</h1>
+            <div className="mt-1.5 flex flex-wrap items-center gap-2">
+              {g.element && (
+                <span
+                  className="rounded-full px-2.5 py-1 text-xs font-semibold"
+                  style={{ backgroundColor: `${el}1f`, color: el }}
+                >
+                  {g.element}
+                </span>
+              )}
+              {g.weapon_type && <span className="text-xs text-mist-faint">{g.weapon_type}</span>}
+            </div>
+            {g.lore?.short && (
+              <p className="mt-3 max-w-[62ch] text-sm leading-relaxed text-mist-dim">
+                {g.lore.short}
+              </p>
+            )}
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {(g["role(s)"] ?? []).map((r) => (
+                <span
+                  key={r}
+                  className="rounded-full border border-white/10 bg-ink-950/60 px-2.5 py-1 text-[11px] text-mist-dim"
+                >
+                  {r}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="mt-8 space-y-10">
+        {/* Weapons */}
+        {!!rankedWeapons.length && (
+          <section id="weapons">
+            <h2 className="text-xl font-semibold text-white">Best weapons</h2>
+            <p className="page-sub">Ranked from best in slot downward.</p>
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              {rankedWeapons.map((w) => (
+                <div key={`${w.rank}-${w.name}`} className="card flex gap-3.5 p-4">
+                  <div className="relative shrink-0">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={weaponIcon(w.name)}
+                      alt={w.name}
+                      className="h-13 w-13 h-[52px] w-[52px] rounded-lg border border-white/10 object-cover"
+                    />
+                    {w.rank ? (
+                      <span className="stat-num absolute -left-1.5 -top-1.5 grid h-5 w-5 place-items-center rounded-full bg-gold-500 text-[10px] font-bold text-ink-950">
+                        {w.rank}
+                      </span>
+                    ) : null}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-sm font-medium text-white">
+                      {w.name}
+                      {w.rarity && <span className="ml-1.5 text-xs text-gold-300">{w.rarity}</span>}
+                      {w.recommended_refinement && (
+                        <span className="stat-num ml-2 rounded-full bg-ink-800 px-1.5 py-0.5 text-[10px] text-mist-dim">
+                          {w.recommended_refinement}
+                        </span>
+                      )}
+                    </div>
+                    {w.notes && (
+                      <p className="mt-1 text-[13px] leading-relaxed text-mist-dim">{w.notes}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Artifacts + stat priority */}
+        {!!g.artifacts?.length && (
+          <section id="artifacts">
+            <h2 className="text-xl font-semibold text-white">Artifacts and stats</h2>
+            {(g.main_stats || g.substats_priority || g.er_requirements) && (
+              <div className="card mt-4 p-5">
+                {g.main_stats && (
+                  <div className="grid gap-4 sm:grid-cols-3">
+                    {(["Sands", "Goblet", "Circlet"] as const).map((slot) => (
+                      <div key={slot}>
+                        <div className="text-[11px] uppercase tracking-wider text-mist-faint">
+                          {slot}
+                        </div>
+                        <div className="mt-1 text-sm font-medium text-white">
+                          {g.main_stats![slot]}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {g.substats_priority?.length ? (
+                  <div className="mt-4 border-t border-white/[0.06] pt-4 text-sm">
+                    <span className="text-mist-faint">Substats </span>
+                    <span className="text-mist">
+                      {g.substats_priority.join("  >  ")}
+                    </span>
+                  </div>
+                ) : null}
+                {g.er_requirements?.length ? (
+                  <div className="mt-3 space-y-1.5">
+                    {g.er_requirements.map((e) => (
+                      <div key={e.condition} className="text-sm">
+                        <span className="stat-num font-medium text-gold-300">{e.value}</span>
+                        <span className="ml-2 text-mist-dim">{e.condition}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+            )}
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              {g.artifacts.map((a, i) => (
+                <div key={`${i}-${a.set}`} className="card flex gap-3.5 p-4">
+                  <div className="relative shrink-0">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={artifactIcon(a.set)}
+                      alt={a.set}
+                      className="h-[52px] w-[52px] rounded-lg border border-white/10 object-cover"
+                    />
+                    <span className="stat-num absolute -left-1.5 -top-1.5 grid h-5 w-5 place-items-center rounded-full bg-gold-500 text-[10px] font-bold text-ink-950">
+                      {i + 1}
+                    </span>
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-sm font-medium text-white">{a.set}</div>
+                    {a.notes && (
+                      <p className="mt-1 text-[13px] leading-relaxed text-mist-dim">{a.notes}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Teams */}
+        {!!g.team_comps?.length && (
+          <section id="teams">
+            <h2 className="text-xl font-semibold text-white">Team compositions</h2>
+            <div className="mt-4 space-y-4">
+              {g.team_comps.map((t) => (
+                <div key={t.name} className="card p-5">
+                  <div className="text-sm font-semibold text-white">{t.name}</div>
+                  <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
+                    {t.members.map((m, idx) => (
+                      <div key={`${t.name}-${m.name}-${idx}`} className="flex items-center gap-2.5">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={teamMemberIcon(m.name)}
+                          alt={m.name}
+                          className="h-10 w-10 shrink-0 rounded-lg border border-white/10 object-cover"
+                        />
+                        <div className="min-w-0">
+                          <div className="truncate text-[13px] font-medium text-white">{m.name}</div>
+                          {m.role && (
+                            <div className="truncate text-[11px] text-mist-faint">{m.role}</div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  {t.notes && (
+                    <p className="mt-3 border-t border-white/[0.06] pt-3 text-[13px] leading-relaxed text-mist-dim">
+                      {t.notes}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Pros / Cons */}
+        {(g.pros_cons?.pros?.length || g.pros_cons?.cons?.length) && (
+          <section id="proscons">
+            <h2 className="text-xl font-semibold text-white">Strengths and weaknesses</h2>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <div className="card p-5">
+                <div className="flex items-center gap-2 text-sm font-medium text-element-anemo">
+                  <ThumbsUp size={15} strokeWidth={1.5} /> Strengths
+                </div>
+                <ul className="mt-3 space-y-2 text-[13px] leading-relaxed text-mist-dim">
+                  {(g.pros_cons?.pros ?? []).map((p) => (
+                    <li key={p} className="flex gap-2">
+                      <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-element-anemo" />
+                      {p}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="card p-5">
+                <div className="flex items-center gap-2 text-sm font-medium text-element-pyro">
+                  <ThumbsDown size={15} strokeWidth={1.5} /> Weaknesses
+                </div>
+                <ul className="mt-3 space-y-2 text-[13px] leading-relaxed text-mist-dim">
+                  {(g.pros_cons?.cons ?? []).map((c) => (
+                    <li key={c} className="flex gap-2">
+                      <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-element-pyro" />
+                      {c}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            {g.pros_cons?.playstyle_notes?.length ? (
+              <div className="card mt-3 p-5">
+                <div className="text-sm font-medium text-white">Playstyle and rotations</div>
+                <ul className="mt-3 space-y-2 text-[13px] leading-relaxed text-mist-dim">
+                  {g.pros_cons.playstyle_notes.map((n) => (
+                    <li key={n} className="flex gap-2">
+                      <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-gold-400" />
+                      {n}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+          </section>
+        )}
+
+        {/* Materials */}
+        {(g.materials?.character_ascension?.length || g.materials?.talent_ascension?.length) && (
+          <section id="materials">
+            <h2 className="text-xl font-semibold text-white">Ascension materials</h2>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <div className="card p-5">
+                <div className="text-sm font-medium text-white">Character ascension</div>
+                <ul className="mt-3 space-y-1.5 text-[13px] text-mist-dim">
+                  {(g.materials?.character_ascension ?? []).map((m) => (
+                    <li key={m}>{m}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="card p-5">
+                <div className="text-sm font-medium text-white">Talent materials</div>
+                <ul className="mt-3 space-y-1.5 text-[13px] text-mist-dim">
+                  {(g.materials?.talent_ascension ?? []).map((m) => (
+                    <li key={m}>{m}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </section>
+        )}
+      </div>
+    </div>
+  );
 }

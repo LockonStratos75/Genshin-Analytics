@@ -1,15 +1,20 @@
+import ImportAccount from "@/components/connect/ImportAccount";
+import ImportWishes from "@/components/gacha/ImportWishes";
 
-import ConnectHoyolab from "@/components/ConnectHoyolab";
-import PasteWishURL from "@/components/PasteWishURL";
-import TextMapUpload from "@/components/TextMapUpload";
+export const metadata = { title: "Import Data · Genshin Analytics" };
 
-export default function ConnectPage(){
+export default function ConnectPage() {
   return (
-    <div className="grid gap-6">
-      <h1 className="text-2xl font-semibold">Connect Your Account</h1>
-      <ConnectHoyolab />
-      {/*<TextMapUpload />*/}
-      <PasteWishURL />
+    <div>
+      <h1 className="page-title">Import Data</h1>
+      <p className="page-sub">
+        Two sources power this site: your Enka.Network showcase (characters, builds) and your wish
+        history (pity tracking). Both stay in your browser; nothing is stored on a server.
+      </p>
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        <ImportAccount />
+        <ImportWishes />
+      </div>
     </div>
   );
 }
